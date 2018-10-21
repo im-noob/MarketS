@@ -23,11 +23,7 @@ export default class HomeScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
+              source={ require('../assets/images/market.png') }
               style={styles.welcomeImage}
             />
         </ScrollView>

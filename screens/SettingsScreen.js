@@ -8,13 +8,17 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
+import MapView from 'react-native-maps';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Container, Content, List, Left, Body, Right, ListItem, Button,Switch } from 'native-base'
+import { Container, Content, List, Left, Body, Right, ListItem, Button,Card,CardItem } from 'native-base'
+import { createStackNavigator } from 'react-navigation';
+import EditProfile from './EditProfile';
+import EditWork from './EditWork';
 
-const {width} = Dimensions.get('window');
-export default class SettingsScreen extends React.Component {
+const {height,width} = Dimensions.get('window');
+class SettingsScreen extends React.Component {
 static navigationOptions = {
     header: (<Image source={require('../assets/images/cover.png')}
     style={{ width: width, height: 75 }} />),
@@ -24,7 +28,10 @@ static navigationOptions = {
     super(props)
 
     this.state = {
-        activeIndex: 0
+        activeIndex: 0,
+        latitude: 25.240905,
+        longitude: 86.992738,
+
     }
 }
 
@@ -130,8 +137,21 @@ renderSection() {
   }
   else if (this.state.activeIndex == 3) {
     return (
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        <Text>3</Text>
+      <View style={{ height: 300 }}>
+        
+          <MapView style={styles.map} initialRegion={{
+                    latitude:this.state.latitude ,
+                    longitude:this.state.longitude,
+                    latitudeDelta: .05,
+                    longitudeDelta: .05
+                    }}> 
+                
+                    {!!this.state.latitude && !!this.state.longitude && <MapView.Marker
+                        coordinate={{"latitude":this.state.latitude,"longitude":this.state.longitude}}
+                        title={"Your Location"}
+                    />}
+
+                </MapView>    
       </View>
     )
   }
@@ -179,14 +199,15 @@ renderSection() {
                                     style={{ flexDirection: 'row' }}>
                                     {/** Edit profile takes up 3/4th **/}
                                     <Button bordered dark
-                                        style={{ flex: 3, marginLeft: 10, justifyContent: 'center', height: 30 }}><Text>Edit Profile</Text></Button>
+                                        style={{ flex: 3, marginLeft: 10, justifyContent: 'center', height: 30 }} onPress={()=>{this.props.navigation.navigate('EditProfile')}}><Text>Edit Profile</Text></Button>
                                     {/** Settings takes up  1/4th place **/}
                                     <Button bordered dark style={{
                                         flex: 1,
                                         height: 30,
                                         marginRight: 10, marginLeft: 5,
                                         justifyContent: 'center'
-                                    }}>
+                                    }} 
+                                    onPress={()=>{this.props.navigation.navigate('EditWork')}}>
                                         <Icon name="settings" style={{ color: 'black' }}></Icon></Button>
                                 </View>
                             </View>{/**End edit profile**/}
@@ -222,11 +243,11 @@ renderSection() {
                             transparent active={this.state.activeIndex == 2}>
                             <Icon name="map" style={[{ fontSize: 32 },this.state.activeIndex == 2 ? {} : { color: 'grey' }]}></Icon>
                         </Button>
-                        <Button
+                        {/* <Button
                             onPress={() => this.segmentClicked(3)}
                             transparent last active={this.state.activeIndex == 3}>
                             <Icon name="map-marker-outline" style={[{ fontSize: 32 }, this.state.activeIndex == 3 ? {} : { color: 'grey' }]}></Icon>
-                        </Button>
+                        </Button> */}
                     </View>
                     {/** Height =width/3 so that image sizes vary according to size of the phone yet remain squares **/}
 
@@ -248,5 +269,42 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30,
+  },  map: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    
   },
+
+});
+
+
+export default class Settings extends React.Component{
+  static navigationOptions = {
+    header: null,
+  };
+  render(){
+    return(
+      <AppStackNavigaor/>
+    );
+  }
+}
+const AppStackNavigaor =  createStackNavigator({
+  Profile:{
+    screen: SettingsScreen,
+  },
+  EditProfile:{
+    screen: EditProfile,
+  },
+  EditWork:{
+    screen:EditWork,
+  }
+
+},
+{
+  header:null,
+  // mode: 'modal',
+  // headerMode: 'none',
 });

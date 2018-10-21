@@ -1,11 +1,14 @@
 {
   "expo": {
-    "name": "MarketS",
+    "name": "MarketS Testing Map",
     "description": "A very interesting project.",
     "slug": "MarketS",
     "privacy": "public",
     "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -21,7 +24,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.biharilegends.markets"
+    },
+    "android": {
+      "package": "com.biharilegends.markets"
     }
   }
 }
