@@ -13,14 +13,25 @@ export default class EditProfile extends Component {
         title:"Edit Profile",
       };
       
-  constructor(props) {
+constructor(props) {
     super(props)
-
     this.state = {
-        state:"",
+        state:"Bihar",
+        name:"aarav kumar",
+        phoneno:"8340669783",
+        city:"Bhagalpur",
+        pincode:"812002",
+        address:"Nayabazar,Near Hanuman Mandir, House no:31",
     }
 }
-
+_handle_submit = () =>{
+    console.log(this.state.name);
+    console.log(this.state.phoneno);
+    console.log(this.state.city);
+    console.log(this.state.pincode);
+    console.log(this.address);
+    console.log(this.state.state);
+}
     render() {
        
         return (
@@ -29,23 +40,38 @@ export default class EditProfile extends Component {
                     <Form>
                         <Item floatingLabel style = {styles.item}>
                             <Label>Name</Label>
-                            <Input />
+                            <Input 
+                                onChangeText = {(text) => { this.setState({name:text});}}
+                                value = {this.state.name}
+                            />
                         </Item>
                         <Item floatingLabel style = {styles.item}>
                             <Label>Phone No</Label>
-                            <Input />
+                            <Input 
+                                onChangeText = {(text) => { this.setState({phoneno:text});}}
+                                value = {this.state.phoneno}
+                            />
                         </Item>
                         <Item floatingLabel style = {styles.item}>
                             <Label>City</Label>
-                            <Input />
+                            <Input 
+                                onChangeText = {(text) => { this.setState({city:text});}}
+                                value = {this.state.city}
+                            />
                         </Item>
                         <Item floatingLabel style = {styles.item}>
                             <Label>PinCode</Label>
-                            <Input />
+                            <Input 
+                                onChangeText = {(text) => { this.setState({pincode:text});}}
+                                value = {this.state.pincode}
+                            />
                         </Item>
                         <Item style = {styles.item}>
                             <Label>Address:</Label>
-                            <Textarea rowSpan={3} bordered style={{width:width*(3/4)}} />
+                            <Textarea rowSpan={3} bordered style={{width:width*(3/4)}} 
+                                onChangeText = {(text) => { this.setState({address:text});}}
+                                value = {this.state.address}
+                            />
                         </Item>
                         <Item style = {styles.item}>
                             <Label>State</Label>
@@ -88,8 +114,8 @@ export default class EditProfile extends Component {
                             </Right>
                         </Item>
                         
-                        <Button block bordered style={{ margin:20}}>
-                            <Text>Primary</Text>
+                        <Button block bordered style={{ margin:20}} onPress={() =>{this._handle_submit()}}>
+                            <Text>Save</Text>
                         </Button>
                         
                         
@@ -105,7 +131,7 @@ export default class EditProfile extends Component {
     phoneno
     state
     city
-    princode
+    pincode
     address
 */
 

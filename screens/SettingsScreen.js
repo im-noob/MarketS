@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import MapView from 'react-native-maps';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Container, Content, List, Left, Body, Right, ListItem, Button,Card,CardItem } from 'native-base'
+import { Container, Content, List, Left, Body, Right, ListItem, Button,Card,CardItem,Thumbnail } from 'native-base'
 import { createStackNavigator } from 'react-navigation';
 import EditProfile from './EditProfile';
 import EditWork from './EditWork';
@@ -29,9 +29,32 @@ static navigationOptions = {
 
     this.state = {
         activeIndex: 0,
-        latitude: 25.240905,
-        longitude: 86.992738,
-
+        // latitude: 25.240905,
+        // longitude: 86.992738,
+        displayName:"Aarav Kumar",
+        mainwork:"Wire Man | Software Engg.",
+        contactNO:"8340669783",
+        avtar_url:"https://instagram.fpat1-1.fna.fbcdn.net/vp/630aea90950b45a546a77847fa0a2827/5C6BF0AC/t51.2885-19/s150x150/31908285_2109461939310314_4190149362170462208_n.jpg",
+        searched:"485",
+        contract:"205",
+        ratting:"4.9",
+        items0:[
+          {A:'Wire Man',B:'300-600'},
+          {A:'Warring',B:'1000-1200'},
+          {A:'Fan Repair',B:'250-550'},
+          {A:'Tv Repair',B:'1800-6000'},
+          {A:'Washing Machine Repair',B:'2600-6600'},
+        ],
+        items1: [
+          {A:'Work Experience',B:'3 Year'},
+          {A:'Working Hour',B:'10:00-4:00'},
+        ],
+        items2:[
+          {A:'State',B:'Bihar'},
+          {A:'City',B:'BGP'},
+          {A:'PinCode',B:'812001'},
+          {A:'Address',B:'Nayabazar,Near Hanuman Mandir, House no:31'},
+        ],
     }
 }
 
@@ -43,24 +66,7 @@ segmentClicked(index) {
 }
 /* render middle section*/
 renderSection() {
-  var items0 = [
-    {A:'Wire Man',B:'300-600'},
-    {A:'Warring',B:'1000-1200'},
-    {A:'Fan Repair',B:'250-550'},
-    {A:'Tv Repair',B:'1800-6000'},
-    {A:'Washing Machine Repair',B:'2600-6600'},
-
-  ];
-  var items1 = [
-    {A:'Work Experience',B:'3 Year'},
-    {A:'Working Hour',B:'10:00-4:00'},
-  ];
-  var items2 = [
-    {A:'State',B:'Bihar'},
-    {A:'City',B:'BGP'},
-    {A:'PinCode',B:'812001'},
-    {A:'Address',B:'Nayabazar,Near Hanuman Mandir, House no:31'},
-  ];
+  var {items0, items1, items2} = this.state;
   
   if (this.state.activeIndex == 0) {
     return (
@@ -135,26 +141,26 @@ renderSection() {
       </Container>
     )
   }
-  else if (this.state.activeIndex == 3) {
-    return (
-      <View style={{ height: 300 }}>
+  // else if (this.state.activeIndex == 3) {
+  //   return (
+  //     <View style={{ height: 300 }}>
         
-          <MapView style={styles.map} initialRegion={{
-                    latitude:this.state.latitude ,
-                    longitude:this.state.longitude,
-                    latitudeDelta: .05,
-                    longitudeDelta: .05
-                    }}> 
+  //         <MapView style={styles.map} initialRegion={{
+  //                   latitude:this.state.latitude ,
+  //                   longitude:this.state.longitude,
+  //                   latitudeDelta: .05,
+  //                   longitudeDelta: .05
+  //                   }}> 
                 
-                    {!!this.state.latitude && !!this.state.longitude && <MapView.Marker
-                        coordinate={{"latitude":this.state.latitude,"longitude":this.state.longitude}}
-                        title={"Your Location"}
-                    />}
+  //                   {!!this.state.latitude && !!this.state.longitude && <MapView.Marker
+  //                       coordinate={{"latitude":this.state.latitude,"longitude":this.state.longitude}}
+  //                       title={"Your Location"}
+  //                   />}
 
-                </MapView>    
-      </View>
-    )
-  }
+  //               </MapView>    
+  //     </View>
+  //   )
+  // }
 }
   render() {
     return(
@@ -167,8 +173,8 @@ renderSection() {
                         {/**User photo takes 1/3rd of view horizontally **/}
                         <View
                             style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
-                            <Image source={require('../assets/images/me.png')}
-                                style={{ width: 75, height: 75, borderRadius: 37.5 }} />
+                            <Image source={{ uri: this.state.avtar_url }}
+                                style={{ width: 75, height: 75, borderRadius: 37.5,borderColor:"black",borderWidth:1 }} />
                         </View>
                         {/**User Stats take 2/3rd of view horizontally **/}
                         <View style={{ flex: 3 }}>
@@ -180,15 +186,15 @@ renderSection() {
                                     alignItems: 'flex-end'
                                 }}>
                                 <View style={{ alignItems: 'center' }}>
-                                    <Text>485<Icon name="account-search" style={{ color: 'black' }}></Icon></Text>
+                                    <Text>{this.state.searched}<Icon name="account-search" style={{ color: 'black' }}></Icon></Text>
                                     <Text style={{ fontSize: 10, color: 'grey' }}>Searched</Text>
                                 </View>
                                 <View style={{ alignItems: 'center' }}>
-                                    <Text>205<Icon name="checkbox-marked-circle" style={{ color: '#63af04' }}></Icon></Text>
+                                    <Text>{this.state.contract}<Icon name="checkbox-marked-circle" style={{ color: '#63af04' }}></Icon></Text>
                                     <Text style={{ fontSize: 10, color: 'grey' }}>Contract</Text>
                                 </View>
                                 <View style={{ alignItems: 'center' }}>
-                                    <Text>4.9<Icon name="star" style={{ color: 'black' }}></Icon></Text>
+                                    <Text>{this.state.ratting}<Icon name="star" style={{ color: 'black' }}></Icon></Text>
                                     <Text style={{ fontSize: 10, color: 'grey' }}>Ratting</Text>
                                 </View>
                             </View>
@@ -216,9 +222,9 @@ renderSection() {
 
                     <View style={{ paddingBottom: 10 }}>
                         <View style={{ paddingHorizontal: 10 }}>
-                            <Text style={{ fontWeight: 'bold' }}>Aarav Kumar</Text>
-                            <Text>Wire Man | Software Engg.</Text>
-                            <Text>+91 8340669783</Text>
+                            <Text style={{ fontWeight: 'bold' }}>{this.state.displayName}</Text>
+                            <Text>{this.state.mainwork}</Text>
+                            <Text>+91 {this.state.contactNO}</Text>
                         </View>
                     </View>
                 </View>
