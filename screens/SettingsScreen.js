@@ -120,6 +120,7 @@ static navigationOptions = {
         }).catch((error) => {
             alert("slow network");
             console.log("on error featching:"+error);
+            this.setState({loading:false});
         });
       }
     });

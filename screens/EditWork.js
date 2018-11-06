@@ -3,9 +3,12 @@ import {
     Dimensions,
  Picker,
     StyleSheet,
-    View
+    View,
+    NetInfo,
+    ToastAndroid
 } from "react-native";
 import { CheckBox, FormLabel } from 'react-native-elements'
+import Global from '../constants/Global';
 
 import { Container, Content, List, ListItem, Button, Label, Textarea,Text , Card,Spinner,Form,Item,Input } from 'native-base'
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,11 +33,77 @@ export default class EditWork extends Component {
             EndAMPM:workingHour.split("-")[1].split(":")[2],
             workType:props.navigation.getParam('workType', ''),
             renderComponentFlag:false,
+            saveButtonDisable:false,
         }
     }
     componentDidMount() {
         setTimeout(() => {this.setState({renderComponentFlag: true})}, 0);
     }
+    _handle_submit = () =>{
+        var workingHourSend = this.state.StartHour+":"+this.state.StartMin+":"+this.state.startAMPM+"-"+this.state.EndHour+":"+this.state.EndMin+":"+this.state.EndAMPM;
+        console.log(workingHourSend);
+        console.log(this.state.expYear);
+        console.log(this.state.workType);
+
+        // checking net and sending data
+        var connectionInfoLocal = '';
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+        console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+        if(connectionInfo.type == 'none'){
+            console.log("no internet ");
+            ToastAndroid.showWithGravityAndOffset(
+            'Oops! No Internet Connection',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+            );
+            
+        }else{
+            console.log("yes internet ");
+            this.setState({saveButtonDisable:true})
+            fetch(Global.API_URL+'updateProfileInfo', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjI5NjQyMmFlMDc2NTdlZjhjNWFmNzRjYWNlZDg1ODkxOWRkYjFhNWE5NWM0YWJiZjVmMGVmY2MxZThiZDk5Y2ZhMDcxZGUyODJmOWFmYWRhIn0.eyJhdWQiOiIxIiwianRpIjoiMjk2NDIyYWUwNzY1N2VmOGM1YWY3NGNhY2VkODU4OTE5ZGRiMWE1YTk1YzRhYmJmNWYwZWZjYzFlOGJkOTljZmEwNzFkZTI4MmY5YWZhZGEiLCJpYXQiOjE1NDExODAxNTEsIm5iZiI6MTU0MTE4MDE1MSwiZXhwIjoxNTcyNzE2MTUxLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.qGTitB2xSrROQFp_77V9guBFjcmY5FHUMizq4rMoMJxR22rFOQOLH_yi1mXlbSQ5dD5R5mSymrB3TRByvnhu95MJk3TWPRU66susL8yyV3nHA_aOMEpVNon1WinsFP4b7YQDOtgC4fa9yrxDE9KxdSU0WpQ-GxG9XCRJeudXhxYEAnBWwjmWdd7g-nidqsQUmnmjF_opI9TPXG7bbCUQjl5fO5Y7AHmS-qOhanpBL6eKFoRp9-aJtnIFofVAtCnS3hElvAhhNXgVdH0hp__f1O-y34qz_OIYI9EWUV3PpdZy_Rd-tAZW05-XHbzBykYlH13U4n7ViXtbiFmTuXmBP3amXrZB09zA_hGTB1fAYEsqNDQXgGDBc4T4ueeH6wGSaSVt3k1AfZmKCU7nNj8I6hHJ_fkeT795PQ-_UKK8c8P06xRy-YtSJMfvvOS08Vd3VDIAf0BOEreiX1EfSRBfov43KpDFuIvDtuKX50Vssxuv2NxGalGHapJLzKSm4xz9iJtKRcS_qQaGos_Xddu1Fy-w5s1FPkz0GTiY1HLxSag-44PfmKgRNQbgm7O6now6R2duVbqWkv05VngR3QnFG4pjDKH4kxRFFTUEXcmyGHrKpcodohK1QdpIz80N-vESf11tqFb5xcWKgqKPNN0Zsru1OuN05_e2tQ5GGuA3mJU',
+                },
+                body: JSON.stringify({
+                    workingHour:workingHourSend,
+                    expYear:this.state.expYear,
+                    workType:this.state.workType,
+                   
+                })
+            }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log("resp:",responseJson);
+                
+                var itemsToSet = responseJson.data; 
+                if(responseJson.data == "saved"){
+                    ToastAndroid.showWithGravityAndOffset(
+                        'Sucessfully Saved!',
+                        ToastAndroid.LONG,
+                        ToastAndroid.BOTTOM,
+                        25,
+                        50,
+                    );
+                }
+                this.setState({
+                    saveButtonDisable:false,
+                });
+            }).catch((error) => {
+                alert("slow network");
+                console.log("on error featching:"+error);
+                this.setState({
+                    saveButtonDisable:false,
+                });
+            });
+        }
+        });
+        console.log(connectionInfoLocal);
+        
+    }
+
     _renderHeader(title, expanded) {
         return (
           <View
@@ -355,7 +424,7 @@ export default class EditWork extends Component {
                     </View>
                     {/* working details:end */}
                     <Card>
-                        <Button block dark >
+                        <Button block dark onPress={()=>{this._handle_submit()}} disabled={this.state.saveButtonDisable}>
                             <Text>Save</Text>
                         </Button>
                     </Card>

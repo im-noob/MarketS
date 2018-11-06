@@ -37,8 +37,8 @@ SettingsStack.navigationOptions = {
 
 export default createBottomTabNavigator(
   {
-    SettingsStack,
-    HomeStack,
+   
+    HomeStack, SettingsStack,
   },
   {
     tabBarOptions:{

@@ -119,6 +119,7 @@ class ListRender extends React.Component{
         }).catch((error) => {
             alert("updated slow network");
             console.log("on error featching:"+error);
+            this.setState({loading:false});
         });
       }
     });
