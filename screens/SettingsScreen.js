@@ -224,24 +224,24 @@ renderSection() {
                 </View>
 
                 <View >
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', borderTopWidth: 1,borderBottomWidth:1, borderBottomColor : '#eae5e5' , borderTopColor: '#eae5e5' }}>
+                    <View style={{ backgroundColor:'#f6f6f6', flexDirection: 'row', justifyContent: 'space-around', borderTopWidth: 1,borderBottomWidth:1, borderBottomColor : '#eae5e5' , borderTopColor: '#eae5e5' }}>
                         <Button
                             onPress={() => this.segmentClicked(0)}
                             transparent
                             active={this.state.activeIndex == 0}
                         >
-                            <Icon name="lightbulb-on-outline" style={[{ fontSize: 32 }, this.state.activeIndex == 0 ? {} : { color: 'grey' }]} >
+                            <Icon name="lightbulb-on-outline" style={[{ fontSize: 32 }, this.state.activeIndex == 0 ? {color:'#2f95dc'} : { color: 'grey' }]} >
                             </Icon>
                         </Button>
                         <Button
                             onPress={() => this.segmentClicked(1)}
                             transparent active={this.state.activeIndex == 1}>
-                            <Icon name="worker" style={[{ fontSize: 32 }, this.state.activeIndex == 1 ? {} : { color: 'grey' }]}></Icon>
+                            <Icon name="worker" style={[{ fontSize: 32 }, this.state.activeIndex == 1 ? {color:'#2f95dc'} : { color: 'grey' }]}></Icon>
                         </Button>
                         <Button
                             onPress={() => this.segmentClicked(2)}
                             transparent active={this.state.activeIndex == 2}>
-                            <Icon name="map" style={[{ fontSize: 32 },this.state.activeIndex == 2 ? {} : { color: 'grey' }]}></Icon>
+                            <Icon name="map" style={[{ fontSize: 32 },this.state.activeIndex == 2 ? {color:'#2f95dc'} : { color: 'grey' }]}></Icon>
                         </Button>
                         {/* <Button
                             onPress={() => this.segmentClicked(3)}
@@ -254,7 +254,7 @@ renderSection() {
                     {this.renderSection()}
                 </View>
           </Content>
-        </Container >
+        </Container>
             
       
     );

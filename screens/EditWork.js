@@ -99,7 +99,6 @@ export default class EditWork extends Component {
           ];
         return (
             <Container>
-                <Header/>
                 <Content>
                 <List>
                     {/* working experience section:start */}
