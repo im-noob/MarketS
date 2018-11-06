@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button} from 'native-base';
 import Icon  from 'react-native-vector-icons/Feather';    
-import {  } from 'react-native-elements'
-
+import {  } from 'react-native-elements';
+import Global from '../constants/Global';
 const {width} = Dimensions.get('window');
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -98,9 +98,10 @@ class ListRender extends React.Component{
           {title:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
         ];
         this.setState({items:itemsToSet,loading:false});
+        
       }else{
         console.log("yes internet ");
-        fetch('http://gomarket.ourgts.com/public/api/incoming_request', {
+        fetch(Global.API_URL+'incoming_request', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
