@@ -5,7 +5,8 @@ import {
   Dimensions,
   Platform,
   NetInfo,
-  View
+  View,
+  ToastAndroid
 } from "react-native";
 import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button} from 'native-base';
 import Icon  from 'react-native-vector-icons/Feather';    
@@ -93,10 +94,14 @@ class ListRender extends React.Component{
       console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
       if(connectionInfo.type == 'none'){
         console.log("no internet ");
-        var itemsToSet =  [
-          {title:'Donald Trump',work_type:'Car Reparing',date:'28 Nov 2018 11:24 AM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/6d5170dcf49f011a0c016d4b572543d8/5C662705/t51.2885-19/s150x150/23823676_515039535523575_7479748231031685120_n.jpg'},
-          {title:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
-        ];
+        
+        ToastAndroid.showWithGravityAndOffset(
+          'Oops! No Internet Connection',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+        );
         this.setState({items:itemsToSet,loading:false});
         
       }else{
@@ -151,7 +156,7 @@ class ListRender extends React.Component{
                       </Body>
                       <Right>
   
-                            <Button  transparent onPress={()=>{this._handleCall("8340669783")}}>
+                            <Button  transparent onPress={()=>{this._handleCall(item.contactNo)}}>
                                 <Icon name="phone" style={{fontSize:30,color:"#17b003"}}/>
                             </Button>
   
