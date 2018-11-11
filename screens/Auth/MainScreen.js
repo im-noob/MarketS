@@ -8,7 +8,9 @@ import {
     Modal,
     TouchableOpacity,
     Linking,
-    NetInfo
+    NetInfo,
+    AsyncStorage,
+
 } from "react-native";
 import { Container, Spinner, Button,Text, Item,Input,CheckBox,Body} from 'native-base';
 import {createDrawerNavigator,DrawerItems, SafeAreaView,createStackNavigator,NavigationActions } from 'react-navigation';
@@ -33,7 +35,7 @@ export default class MainScreen extends Component {
             reg_phone:'',
             reg_password:'',
             reg_confirm:'',
-            reg_submitButtonDisable:true,
+            reg_submitButtonDisable:false,
         }
     }
     componentDidMount() {
@@ -140,12 +142,23 @@ export default class MainScreen extends Component {
             }).then((response) => response.json())
             .then((responseJson) => {
                 
-                var itemsToSet = responseJson.success.token; 
-                if(itemsToSet.length != 0 ){
-                    
+                if(responseJson.error != undefined){
+                    alert("Internal Server error 5004");
+                    this.setState({submitButtonDisable:false});
+                    return;
                 }
-                console.log("resp:",itemsToSet);
-                this.setState({submitButtonDisable:false});
+                var itemsToSet = responseJson.success.token; 
+                if(responseJson.status == 'valid'){
+                    if(itemsToSet.length != 0 ){
+                        this._signInAsync(itemsToSet);
+                        return;
+                    }    
+                }else{
+                    this.setState({submitButtonDisable:false});
+                    alert("Invalid Email or Password");
+                }
+                
+                    console.log("resp:",itemsToSet);
                 }).catch((error) => {
                     alert("slow network");
                     console.log("on error featching:"+error);
@@ -155,6 +168,10 @@ export default class MainScreen extends Component {
         });
         console.log(connectionInfoLocal);
     }
+    _signInAsync = async (token) => {
+        // await AsyncStorage.setItem('userToken', token);
+        this.props.navigation.navigate('Home');
+    };
     saveNotificationToken = () => {
         console.log("noti");
     }
@@ -175,7 +192,14 @@ export default class MainScreen extends Component {
             alert("All Fields are required")
             return;
         }
-        
+        if(!this.validateEmail(this.state.reg_email.trim())){
+            alert("Invalid Email! Try again!!!");
+            return;
+        }
+        if(this.state.reg_password != this.state.reg_confirm){
+            alert("Confirm password dont matched with previous one!!");
+            return;
+        }
 
 
         // now sending request to login
@@ -215,10 +239,22 @@ export default class MainScreen extends Component {
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
-                
-                var itemsToSet = responseJson.data; 
-                console.log("resp:",responseJson);
-                this.setState({reg_submitButtonDisable:false});
+                console.log(responseJson);
+                if(responseJson.error != undefined){
+                    alert("Internal Server error 5004");
+                    this.setState({reg_submitButtonDisable:false});
+                    return;
+                }
+                var itemsToSet = responseJson.success.token; 
+                if(responseJson.reg_done == 'yes'){
+                    if(itemsToSet.length != 0 ){
+                        this._signInAsync(itemsToSet);
+                        return;
+                    }    
+                }else{
+                    alert("Invalid Email or Password");
+                    this.setState({reg_submitButtonDisable:false});
+                }
                 }).catch((error) => {
                     alert("slow network");
                     console.log("on error featching:"+error);
@@ -227,6 +263,10 @@ export default class MainScreen extends Component {
         }
         });
         console.log(connectionInfoLocal);
+    }
+    validateEmail = (email) => {
+        var re =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
     }
     render() {
         const {renderCoponentFlag} = this.state;
