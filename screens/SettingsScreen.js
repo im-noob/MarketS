@@ -92,61 +92,7 @@ static navigationOptions = {
         items1:itemsToSet.items1,
         items2:itemsToSet.items2,
         loading:false,
-    });
-
-    // var connectionInfoLocal = '';
-    // NetInfo.getConnectionInfo().then((connectionInfo) => {
-    //   console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
-    //   if(connectionInfo.type == 'none'){
-    //     console.log("no internet ");
-    //     ToastAndroid.showWithGravityAndOffset(
-    //       'Oops! No Internet Connection',
-    //       ToastAndroid.LONG,
-    //       ToastAndroid.BOTTOM,
-    //       25,
-    //       50,
-    //     );
-        
-    //   }else{
-    //     console.log("yes internet ");
-    //     this.setState({loading:true})
-    //     fetch(Global.API_URL+'postProfileData', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Authorization':'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjI5NjQyMmFlMDc2NTdlZjhjNWFmNzRjYWNlZDg1ODkxOWRkYjFhNWE5NWM0YWJiZjVmMGVmY2MxZThiZDk5Y2ZhMDcxZGUyODJmOWFmYWRhIn0.eyJhdWQiOiIxIiwianRpIjoiMjk2NDIyYWUwNzY1N2VmOGM1YWY3NGNhY2VkODU4OTE5ZGRiMWE1YTk1YzRhYmJmNWYwZWZjYzFlOGJkOTljZmEwNzFkZTI4MmY5YWZhZGEiLCJpYXQiOjE1NDExODAxNTEsIm5iZiI6MTU0MTE4MDE1MSwiZXhwIjoxNTcyNzE2MTUxLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.qGTitB2xSrROQFp_77V9guBFjcmY5FHUMizq4rMoMJxR22rFOQOLH_yi1mXlbSQ5dD5R5mSymrB3TRByvnhu95MJk3TWPRU66susL8yyV3nHA_aOMEpVNon1WinsFP4b7YQDOtgC4fa9yrxDE9KxdSU0WpQ-GxG9XCRJeudXhxYEAnBWwjmWdd7g-nidqsQUmnmjF_opI9TPXG7bbCUQjl5fO5Y7AHmS-qOhanpBL6eKFoRp9-aJtnIFofVAtCnS3hElvAhhNXgVdH0hp__f1O-y34qz_OIYI9EWUV3PpdZy_Rd-tAZW05-XHbzBykYlH13U4n7ViXtbiFmTuXmBP3amXrZB09zA_hGTB1fAYEsqNDQXgGDBc4T4ueeH6wGSaSVt3k1AfZmKCU7nNj8I6hHJ_fkeT795PQ-_UKK8c8P06xRy-YtSJMfvvOS08Vd3VDIAf0BOEreiX1EfSRBfov43KpDFuIvDtuKX50Vssxuv2NxGalGHapJLzKSm4xz9iJtKRcS_qQaGos_Xddu1Fy-w5s1FPkz0GTiY1HLxSag-44PfmKgRNQbgm7O6now6R2duVbqWkv05VngR3QnFG4pjDKH4kxRFFTUEXcmyGHrKpcodohK1QdpIz80N-vESf11tqFb5xcWKgqKPNN0Zsru1OuN05_e2tQ5GGuA3mJU',
-    //         },
-    //         body: JSON.stringify({
-              
-    //         })
-    //     }).then((response) => response.json())
-    //       .then((responseJson) => {
-              
-    //           var itemsToSet = responseJson.data; 
-    //           console.log("resp:",responseJson);
-    //           this.setState({
-    //             displayName:itemsToSet.displayName,
-    //             contactNO:itemsToSet.contactNO,
-
-    //             mainwork:itemsToSet.mainwork,
-    //             avtar_url:itemsToSet.avtar_url,
-    //             searched:itemsToSet.searched,
-    //             contract:itemsToSet.contract,
-    //             ratting:itemsToSet.ratting,
-    //             items0:itemsToSet.items0,
-    //             items1:itemsToSet.items1,
-    //             items2:itemsToSet.items2,
-    //             loading:false,
-    //           });
-    //     }).catch((error) => {
-    //         alert("slow network");
-    //         console.log("on error featching:"+error);
-    //         this.setState({loading:false});
-    //     });
-    //   }
-    // });
-    // console.log(connectionInfoLocal);
-    
+    });    
   }
   /* render middle section*/
   renderSection() {
