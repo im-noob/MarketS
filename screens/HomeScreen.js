@@ -102,7 +102,8 @@ class ListRender extends React.Component{
           25,
           50,
         );
-        this.setState({items:itemsToSet,loading:false});
+        this.setState({loading:false});
+        return;
         
       }else{
         console.log("yes internet ");

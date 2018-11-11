@@ -148,9 +148,11 @@ export default class MainScreen extends Component {
                     return;
                 }
                 var itemsToSet = responseJson.success.token; 
+                var profileData = responseJson.profileData;
+                console.log(profileData);
                 if(responseJson.status == 'valid'){
                     if(itemsToSet.length != 0 ){
-                        this._signInAsync(itemsToSet);
+                        this._signInAsync(itemsToSet,JSON.stringify(profileData));
                         return;
                     }    
                 }else{
@@ -168,8 +170,9 @@ export default class MainScreen extends Component {
         });
         console.log(connectionInfoLocal);
     }
-    _signInAsync = async (token) => {
-        // await AsyncStorage.setItem('userToken', token);
+    _signInAsync = async (token,profileData) => {
+        await AsyncStorage.setItem('userToken', token);
+        await AsyncStorage.setItem('userProfileData', profileData);
         this.props.navigation.navigate('Home');
     };
     saveNotificationToken = () => {
