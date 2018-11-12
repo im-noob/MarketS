@@ -6,7 +6,8 @@ import {
   Platform,
   NetInfo,
   View,
-  ToastAndroid
+  ToastAndroid,
+  TouchableOpacity
 } from "react-native";
 import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button} from 'native-base';
 import Icon  from 'react-native-vector-icons/Feather';    
@@ -145,7 +146,7 @@ class ListRender extends React.Component{
       return(
         <List dataArray={items}
               renderRow={(item) =>
-                  <ListItem avatar>
+                  <ListItem avatar style={{borderBottomWidth:1,borderBottomColor:'#c9c9c9'}}>
                       <Left>
                         <Thumbnail source={{ uri: item.avtar_url }} />
                       </Left>
@@ -153,9 +154,17 @@ class ListRender extends React.Component{
                           <Text>{item.title}</Text>
                           <Text note>Work Type: {item.work_type}</Text>
                           <Text note style={{color:'#3679e5'}}>{item.date}</Text>
-  
+                          <View style={{flexDirection:'row'}}>
+                            <TouchableOpacity style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignContent:'center'}}>
+                              <Text>Send Bill</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignSelf:'center'}}>
+                              <Text>View</Text>
+                            </TouchableOpacity>
+                          </View>
+                          
                       </Body>
-                      <Right>
+                      <Right style={{alignContent:'center',alignSelf:'center',}}>
   
                             <Button  transparent onPress={()=>{this._handleCall(item.contactNo)}}>
                                 <Icon name="phone" style={{fontSize:30,color:"#17b003"}}/>
