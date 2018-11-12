@@ -7,9 +7,10 @@ import {
   NetInfo,
   View,
   ToastAndroid,
-  TouchableOpacity
+  TouchableOpacity,
+  Modal
 } from "react-native";
-import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button} from 'native-base';
+import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button,Item,Input} from 'native-base';
 import Icon  from 'react-native-vector-icons/Feather';    
 import {  } from 'react-native-elements';
 import Global from '../constants/Global';
@@ -17,6 +18,8 @@ const {width} = Dimensions.get('window');
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: "Incoming Request",
+    backgroundColor:'#4285f4',
+    color:'#4285f4',
   };
 
   constructor(props){
@@ -60,6 +63,8 @@ class ListRender extends React.Component{
         connectionInfo:'',
         renderContentFlag:false,
         loading:true,
+        SendBillVisible:false,
+
       }
   }
   componentDidMount(){
@@ -144,7 +149,8 @@ class ListRender extends React.Component{
       );
     }else{
       return(
-        <List dataArray={items}
+        <Container>
+            <List dataArray={items}
               renderRow={(item) =>
                   <ListItem avatar style={{borderBottomWidth:1,borderBottomColor:'#c9c9c9'}}>
                       <Left>
@@ -155,7 +161,10 @@ class ListRender extends React.Component{
                           <Text note>Work Type: {item.work_type}</Text>
                           <Text note style={{color:'#3679e5'}}>{item.date}</Text>
                           <View style={{flexDirection:'row'}}>
-                            <TouchableOpacity style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignContent:'center'}}>
+                            <TouchableOpacity 
+                                style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignContent:'center'}}
+                                onPress={()=>{this.setState({SendBillVisible:true,}) }}
+                            >
                               <Text>Send Bill</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignSelf:'center'}}>
@@ -173,7 +182,97 @@ class ListRender extends React.Component{
                       </Right>
                   </ListItem>
               }>
-          </List>
+            </List>
+            {/* SendBill Model */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={this.state.SendBillVisible}
+                onRequestClose={() => {
+                    this.setState({
+                        SendBillVisible:false
+                    })
+                }}>
+                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',backgroundColor:'#111111d6'}}>
+                    <View style={{ width: width*(0.70), height: 300,backgroundColor:"#ffffff"}}>
+                        <TouchableOpacity onPress={()=>{this.setState({SendBillVisible:false})}}>
+                            <Icon name="x-square" style={{alignSelf:'flex-end',fontSize:30}}/>
+                        </TouchableOpacity>
+                        <Text style={{fontSize:30,alignSelf:'center'}}>Sign Up</Text>
+                        <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
+                            <Item regular style={{marginVertical:2}}>
+                                <Input 
+                                    placeholder='Full Name' 
+                                    onChangeText={(text) => this.setState({reg_name:text})}
+                                    textContentType='name'
+                                    returnKeyType='next'
+                                    onSubmitEditing={()=>{}}
+                                />
+                            </Item>
+                            <Item regular style={{marginVertical:2}}>
+                                <Input 
+                                    placeholder='Email' 
+                                    onChangeText={(text) => this.setState({reg_email:text})}
+                                    textContentType='emailAddress'
+                                    returnKeyType='next'
+                                    onSubmitEditing={()=>{}}
+                                    keyboardType='email-address'
+
+                                />
+                            </Item>
+                            <Item regular style={{marginVertical:2}}>
+                                <Input 
+                                    placeholder='Phone NO'
+                                    onChangeText={(text) => this.setState({reg_phone:text})}
+                                    textContentType='telephoneNumber'
+                                    returnKeyType='next'
+                                    onSubmitEditing={()=>{}}
+                                    keyboardType='numeric'
+
+                                />
+                            </Item>
+                            <Item regular style={{marginVertical:2}}>
+                                <Input 
+                                    placeholder='Password'
+                                    onChangeText={(text) => this.setState({reg_password:text})}
+                                    textContentType='password' 
+                                    returnKeyType='next'
+                                    onSubmitEditing={()=>{}}
+                                    secureTextEntry={true}
+                                    keyboardType='visible-password'
+                                />
+                            </Item>    
+                            <Item regular style={{marginVertical:2}}>
+                                <Input 
+                                    placeholder='Confirm password'
+                                    onChangeText={(text) => this.setState({reg_confirm:text})}
+                                    textContentType='password' 
+                                    returnKeyType='go'
+                                    onSubmitEditing={this.submitRegister}
+                                    secureTextEntry={true}
+                                    keyboardType='visible-password'
+                                />
+                            </Item>                 
+                            <Button rounded success block style={{marginVertical:4}} 
+                                onPress={this.submitRegister}
+                                disabled={this.state.reg_submitButtonDisable}
+                            >
+                                <Text>Sign Up</Text>
+                            </Button>
+                            <View style={{marginVertical:6}}>
+                                <Text style={{fontSize:14,alignSelf:'center',color:'#6f6f6f'}}>Clicking Sign Up means that you are agree to the</Text>
+                                <View style={{flexDirection:'row',alignSelf:'center'}}>
+                                    <TouchableOpacity onPress={()=>{Linking.openURL("https://google.com")}}><Text style={{fontSize:14,color:'#2da2d6'}}>Terms & Conditions</Text></TouchableOpacity>
+                                    <Text style={{fontSize:14,color:'#6f6f6f'}}> and </Text>
+                                    <TouchableOpacity onPress={()=>{Linking.openURL("https://google.com")}}><Text style={{fontSize:14,color:'#2da2d6'}}>Privacy Policy.</Text></TouchableOpacity>                                            
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* SendBill modal end */}
+      </Container>
       );
     }
     
