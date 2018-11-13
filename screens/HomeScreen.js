@@ -9,7 +9,7 @@ import {
   ToastAndroid,
   TouchableOpacity,
   Modal,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button,Item,Input,Form,Label} from 'native-base';
 import Icon  from 'react-native-vector-icons/Feather';    
@@ -67,7 +67,22 @@ class ListRender extends React.Component{
         SendBillVisible:false,
         ViewRequet:false,
         AddListSendBillVisible:false,
-
+        sendBillTo_ID:'',
+        openViewRequest_ID:'',
+        addListTitle:'',
+        addListCost:'',
+        BillList:[
+          {work:'A',price:'100',list_id:'1'},
+          {work:'B',price:'200',list_id:'2'},
+          {work:'C',price:'300',list_id:'3'},
+          {work:'D',price:'400',list_id:'4'},
+          {work:'E',price:'500',list_id:'5'},
+          {work:'F',price:'600',list_id:'6'},
+          {work:'G',price:'700',list_id:'7'},
+          {work:'H',price:'800',list_id:'8'},
+          {work:'I',price:'900',list_id:'9'},
+          {work:'J',price:'1000',list_id:'10'},
+       ],
       }
   }
   componentDidMount(){
@@ -101,6 +116,7 @@ class ListRender extends React.Component{
     var connectionInfoLocal = '';
     NetInfo.getConnectionInfo().then((connectionInfo) => {
       console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+      connectionInfo.type = 'none';//force local loding
       if(connectionInfo.type == 'none'){
         console.log("no internet ");
         
@@ -111,7 +127,11 @@ class ListRender extends React.Component{
           25,
           50,
         );
-        this.setState({loading:false});
+        var itemsToSet =  [
+          {req_id:'1', title:'Donald Trump',work_type:'Car Reparing',date:'28 Nov 2018 11:24 AM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/6d5170dcf49f011a0c016d4b572543d8/5C662705/t51.2885-19/s150x150/23823676_515039535523575_7479748231031685120_n.jpg'},
+          {req_id:'2', title:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
+        ];
+        this.setState({items:itemsToSet,loading:false});
         return;
         
       }else{
@@ -141,21 +161,33 @@ class ListRender extends React.Component{
     console.log(connectionInfoLocal);
     
   }
+  _remove_list_item = (item) =>{
+      var arr = this.state.BillList;
+      console.log("in delt list");
+      console.log(arr);
+      var indexOf = -1;
+      // var index = arr.array1.forEach(function(element,index) {
+      for(var i = 0 ; i < arr.length; i ++)
+          if(arr[i].list_id == item)
+            indexOf = i;
+      
+      console.log("index",indexOf);
+      arr.splice(indexOf,1);
+      console.log("after remeoing list ",arr);
+      // temparr.push();
+      // this.setState({AddListSendBillVisible:false,BillList:arr});
+      this.setState({AddListSendBillVisible:false,BillList:[]});
+      setTimeout(()=>{this.setState({BillList:arr});},0);
+      // var arrC = arr;
+      // this.setState({AddListSendBillVisible:false,BillList:arrC});
+      
+      console.log("this is final",this.state.BillList,arr);
+  }
   render(){
     
     var {items} = this.state;
-    var BillList = [
-       {work:'Simon Mignolet',price:'100',},
-       {work:'Nathaniel Clyne',price:'100',},
-       {work:'Dejan Lovren',price:'100',},
-       {work:'Mama Sakho',price:'100',},
-       {work:'Emre Can',price:'100',},
-       {work:'Simon Mignolet',price:'100',},
-       {work:'Nathaniel Clyne',price:'100',},
-       {work:'Dejan Lovren',price:'100',},
-       {work:'Mama Sakho',price:'100',},
-       {work:'Emre Can',price:'100',},
-    ];
+    
+    // BillList=[];
     if(this.state.loading){
       return (
           <View style={styles.loder}>
@@ -178,13 +210,21 @@ class ListRender extends React.Component{
                           <View style={{flexDirection:'row'}}>
                             <TouchableOpacity 
                                 style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignContent:'center'}}
-                                onPress={()=>{this.setState({SendBillVisible:true,}) }}
+                                onPress={()=>{
+                                    this.setState({
+                                        sendBillTo_ID:item.req_id,
+                                        SendBillVisible:true,
+                                        // BillList:[],
+                                        addListTitle:'',
+                                        addListCost:'',
+                                    });
+                                }}
                             >
                               <Text>Send Bill</Text>
                             </TouchableOpacity>
                             <TouchableOpacity 
                                 style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignSelf:'center'}}
-                                onPress={()=>{this.setState({ViewRequet:true,}) }}
+                                onPress={()=>{this.setState({openViewRequest_ID:item.req_id,ViewRequet:true,}) }}
                             >
                               <Text>View</Text>
                             </TouchableOpacity>
@@ -229,13 +269,17 @@ class ListRender extends React.Component{
                         </View>
                         <ScrollView>
                           <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
-                              <List dataArray={BillList}
+                              <List dataArray={this.state.BillList}
                                 renderRow={(item) =>
                                   <ListItem style={{flexDirection:'row'}}>
                                     <Text style={{flex:5}}>{item.work}</Text>
                                     <Text style={{flex:5,alignSelf:'center'}}>{item.price}</Text>
-                                    <TouchableOpacity><Icon style={{flex:2,fontSize:25}} name='edit'/></TouchableOpacity>
-                                    <TouchableOpacity><Icon style={{flex:2,fontSize:25}} name='x'/></TouchableOpacity>
+                                    <TouchableOpacity onPress={()=>{
+
+                                    }}><Icon style={{flex:2,fontSize:25}} name='edit'/></TouchableOpacity>
+                                    <TouchableOpacity onPress={()=>{
+                                        this._remove_list_item(item.list_id);
+                                    }}><Icon style={{flex:2,fontSize:25}} name='x'/></TouchableOpacity>
                                   </ListItem>
                                 }>
                               </List>
@@ -244,7 +288,11 @@ class ListRender extends React.Component{
                         <Divider style={{ backgroundColor: '#ff5722' }} />
                         <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
                             <Button transparent onPress={()=>{this.setState({SendBillVisible:false})}}><Text>Cancle</Text></Button>
-                            <Button transparent onPress={()=>{this.setState({SendBillVisible:false})}}><Text>Send</Text></Button>
+                            <Button transparent onPress={()=>{
+                                this.setState({SendBillVisible:false});
+                                console.log(this.state.BillList);
+                            
+                            }}><Text>Send</Text></Button>
                         </View>
                     </View>
                 </View>
@@ -273,7 +321,9 @@ class ListRender extends React.Component{
                               <Item inlineLabel>
                                 <Label style={{color:'#ff5722'}}>Title</Label>
                                 <Input 
+                                    style={{marginRight:30}} 
                                     underlineColorAndroid="black"
+                                    onChangeText={(text)=>{this.setState({addListTitle:text})}}
                                 />
                               </Item>
                               <Item inlineLabel last>
@@ -281,6 +331,8 @@ class ListRender extends React.Component{
                                 <Input
                                     style={{marginRight:30}} 
                                     underlineColorAndroid='black'
+                                    onChangeText={(text)=>{this.setState({addListCost:text})}}
+                                    keyboardType='numeric'
                                 />
                               </Item>
                             </Form>
@@ -288,11 +340,19 @@ class ListRender extends React.Component{
                         </ScrollView>
                         <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
                             <Button transparent onPress={()=>{this.setState({AddListSendBillVisible:false})}}><Text>Cancle</Text></Button>
-                            <Button transparent onPress={()=>{this.setState({AddListSendBillVisible:false})}}><Text>Send</Text></Button>
+                            <Button transparent onPress={()=>{
+
+                                var temparr = this.state.BillList;
+                                temparr.push({work:this.state.addListTitle,price:this.state.addListCost,list_id:temparr.length+1});
+                                this.setState({AddListSendBillVisible:false,BillList:temparr})
+                            }}><Text>Add</Text></Button>
                         </View>
                     </View>
                 </View>
             </Modal>
+            {/* 
+            * we can impove add send bill for particular use using 2-d array 
+            */}
             {/* add list SendBill modal end */}
             {/* View Model */}
             <Modal
