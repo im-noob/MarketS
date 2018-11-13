@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 import { 
-    Dimensions,
- Picker,
+    Picker,
     StyleSheet,
-    View,
+    Linking ,
+    Dimensions,
+    Platform,
     NetInfo,
-    ToastAndroid
+    View,
+    ToastAndroid,
+    TouchableOpacity,
+    Modal,
+    ScrollView,
 } from "react-native";
 import { CheckBox, FormLabel } from 'react-native-elements'
 import Global from '../constants/Global';
 
-import { Container, Content, List, ListItem, Button, Label, Textarea,Text , Card,Spinner,Form,Item,Input } from 'native-base'
+import {  Card,Container, Spinner,List,ListItem,Text,Content,Button,Item,Input,Form,Label } from 'native-base'
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const {height,width} = Dimensions.get('window');
@@ -31,9 +36,13 @@ export default class EditWork extends Component {
             EndHour:workingHour.split("-")[1].split(":")[0],
             EndMin:workingHour.split("-")[1].split(":")[1],
             EndAMPM:workingHour.split("-")[1].split(":")[2],
-            workType:props.navigation.getParam('workType', ''),
+            workList:props.navigation.getParam('workList', []),
             renderComponentFlag:false,
             saveButtonDisable:false,
+            AddWorkVisible:false,
+            addWorkCost:'',
+            addWorkType:'',
+
         }
     }
     componentDidMount() {
@@ -43,7 +52,7 @@ export default class EditWork extends Component {
         var workingHourSend = this.state.StartHour+":"+this.state.StartMin+":"+this.state.startAMPM+"-"+this.state.EndHour+":"+this.state.EndMin+":"+this.state.EndAMPM;
         console.log(workingHourSend);
         console.log(this.state.expYear);
-        console.log(this.state.workType);
+        console.log(this.state.workList);
 
         // checking net and sending data
         var connectionInfoLocal = '';
@@ -71,7 +80,7 @@ export default class EditWork extends Component {
                 body: JSON.stringify({
                     workingHour:workingHourSend,
                     expYear:this.state.expYear,
-                    workType:this.state.workType,
+                    workList:this.state.workList,
                    
                 })
             }).then((response) => response.json())
@@ -137,7 +146,28 @@ export default class EditWork extends Component {
     //       </List>
     //     );
     // }
-
+    _remove_list_item = (item) =>{
+        var arr = this.state.workList;
+        console.log("in delt list");
+        console.log(arr);
+        var indexOf = -1;
+        // var index = arr.array1.forEach(function(element,index) {
+        for(var i = 0 ; i < arr.length; i ++)
+            if(arr[i].list_id == item)
+              indexOf = i;
+        
+        console.log("index",indexOf);
+        arr.splice(indexOf,1);
+        console.log("after remeoing list ",arr);
+        // temparr.push();
+        // this.setState({AddListSendBillVisible:false,BillList:arr});
+        this.setState({AddWorkVisible:false,workList:[]});
+        setTimeout(()=>{this.setState({workList:arr});},0);
+        // var arrC = arr;
+        // this.setState({AddListSendBillVisible:false,BillList:arrC});
+        
+        console.log("this is final",this.state.workList,arr);
+    }
     render() {    
     // const dataArray = [
     //     { title: "Repair", content: [
@@ -412,15 +442,43 @@ export default class EditWork extends Component {
                         <ListItem itemDivider>
                             <Text>Type your work seprated by Comma ( , )</Text>
                         </ListItem>
-                        <Textarea 
+                        {/* <Textarea 
                             rowSpan={5} 
                             bordered 
                             placeholder="Type your work type sperated by ," 
                             style={{backgroundColor:'#eaf1f4',marginVertical:10,marginHorizontal:6}}  
-                            value={this.state.workType}
-                            onChangeText = {(text) => { this.setState({workType:text});}}
+                            value={this.state.workList}
+                            onChangeText = {(text) => { this.setState({workList:text});}}
     
-                        />
+                        /> */}
+                        <View style={{flexDirection:'row',padding:4,paddingHorizontal:10,}}>
+                            <Text style={{margin:10,flex:1,fontSize:24}}>Work List</Text>
+                            <Button rounded warning transparent 
+                                style={{flex:1,borderBottomColor:'red',borderWidth:1}}
+                                onPress={()=>{
+                                  this.setState({AddWorkVisible:true,addWorkType:'',addWorkCost:''})
+                                }}
+                            ><Text>Add List</Text></Button>
+                        </View>
+                        <ScrollView>
+                          <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
+                              <List dataArray={this.state.workList}
+                                renderRow={(item) =>
+                                  <ListItem style={{flexDirection:'row'}}>
+                                    <Text style={{flex:5}}>{item.work}</Text>
+                                    <Text style={{flex:5,alignSelf:'center'}}>{item.price}</Text>
+                                    <TouchableOpacity onPress={()=>{
+                                        this._remove_list_item(item.list_id);
+                                        this.setState({AddWorkVisible:true,addWorkType:item.work,addWorkCost:item.price});
+                                    }}><Icon style={{flex:2,fontSize:25}} name='pencil'/></TouchableOpacity>
+                                    <TouchableOpacity onPress={()=>{
+                                        this._remove_list_item(item.list_id);
+                                    }}><Icon style={{flex:2,fontSize:25}} name='window-close'/></TouchableOpacity>
+                                  </ListItem>
+                                }>
+                              </List>
+                          </View>
+                        </ScrollView>
                     </View>
                     {/* working details:end */}
                     <Card>
@@ -436,6 +494,68 @@ export default class EditWork extends Component {
     
                     
                     </Content>
+                    {/* add list send bill Model */}
+                    <Modal
+                        animationType='slide'
+                        transparent={true}
+                        visible={this.state.AddWorkVisible}
+                        onRequestClose={() => {
+                            this.setState({
+                                AddWorkVisible:false
+                            })
+                        }}>
+                        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',backgroundColor:'#111111d6'}}>
+                            <View style={{ width: width*(0.95), height: 300,backgroundColor:"#ffffff"}}>
+                                <TouchableOpacity onPress={()=>{this.setState({AddWorkVisible:false})}}>
+                                    <Icon name="close-circle-outline" style={{alignSelf:'flex-end',fontSize:30}}/>
+                                </TouchableOpacity>
+                                <Text style={{fontSize:30,alignSelf:'center'}}>Add List</Text>
+                        
+                                <ScrollView>
+                                <View style={{ width: width*(0.95), alignSelf:'center',marginVertical:5}}>
+                                    <Form>
+                                    <Item inlineLabel>
+                                        <Label style={{color:'#ff5722'}}>Title</Label>
+                                        <Input 
+                                            style={{marginRight:30}} 
+                                            underlineColorAndroid="black"
+                                            onChangeText={(text)=>{this.setState({addWorkType:text})}}
+                                            value={this.state.addWorkType}
+                                            placeholder="Car reparing, Mobile Reparing, etc."
+                                        />
+                                    </Item>
+                                    <Item inlineLabel last>
+                                        <Label style={{color:'#ff5722'}}>Cost</Label>
+                                        <Input
+                                            style={{marginRight:30}} 
+                                            underlineColorAndroid='black'
+                                            onChangeText={(text)=>{this.setState({addWorkCost:text})}}
+                                            keyboardType='numeric'
+                                            value={this.state.addWorkCost}
+                                            placeholder="Min-Max rate like(200-500)"
+                                        />
+                                    </Item>
+                                    </Form>
+                                </View>
+                                </ScrollView>
+                                <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
+                                    <Button transparent onPress={()=>{this.setState({AddWorkVisible:false})}}><Text>Cancle</Text></Button>
+                                    <Button transparent onPress={()=>{
+
+                                        var temparr = this.state.workList;
+                                        console.log("worklist",this.state.workList);
+                                        temparr.push({work:this.state.addWorkType,price:this.state.addWorkCost,list_id:temparr.length+1});
+                                        this.setState({AddWorkVisible:false,workList:temparr})
+                                    }}><Text>Add</Text></Button>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+                    {/* 
+                    * we can impove add send bill for particular use using 2-d array 
+                    */}
+                    {/* add list SendBill modal end */}
+            
                 </Container>
             );
         }else{

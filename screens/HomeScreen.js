@@ -71,18 +71,7 @@ class ListRender extends React.Component{
         openViewRequest_ID:'',
         addListTitle:'',
         addListCost:'',
-        BillList:[
-          {work:'A',price:'100',list_id:'1'},
-          {work:'B',price:'200',list_id:'2'},
-          {work:'C',price:'300',list_id:'3'},
-          {work:'D',price:'400',list_id:'4'},
-          {work:'E',price:'500',list_id:'5'},
-          {work:'F',price:'600',list_id:'6'},
-          {work:'G',price:'700',list_id:'7'},
-          {work:'H',price:'800',list_id:'8'},
-          {work:'I',price:'900',list_id:'9'},
-          {work:'J',price:'1000',list_id:'10'},
-       ],
+        BillList:[],
       }
   }
   componentDidMount(){
@@ -116,7 +105,7 @@ class ListRender extends React.Component{
     var connectionInfoLocal = '';
     NetInfo.getConnectionInfo().then((connectionInfo) => {
       console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
-      connectionInfo.type = 'none';//force local loding
+      // connectionInfo.type = 'none';//force local loding
       if(connectionInfo.type == 'none'){
         console.log("no internet ");
         
@@ -127,15 +116,15 @@ class ListRender extends React.Component{
           25,
           50,
         );
-        var itemsToSet =  [
-          {req_id:'1', clint_name:'Donald Trump',work_type:'Car Reparing',date:'28 Nov 2018 11:24 AM',contactNo:"8340669783",Message:'please repair my car',avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/6d5170dcf49f011a0c016d4b572543d8/5C662705/t51.2885-19/s150x150/23823676_515039535523575_7479748231031685120_n.jpg'},
-          {req_id:'2', clint_name:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contactNo:"8340669783",Message:'please repair my Laptop its HDD might be corrupt so come one 1 TB HP HDD so i can replace it... and also come with data recovery tool.. okay... come fast its necessery .. . tks in advance .',avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
-        ];
-        this.setState({items:itemsToSet,loading:false});
+        // var itemsToSet =  [
+        //   {req_id:'1', clint_name:'Donald Trump',work_type:'Car Reparing',date:'28 Nov 2018 11:24 AM',contactNo:"8340669783",Message:'please repair my car',avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/6d5170dcf49f011a0c016d4b572543d8/5C662705/t51.2885-19/s150x150/23823676_515039535523575_7479748231031685120_n.jpg'},
+        //   {req_id:'2', clint_name:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contactNo:"8340669783",Message:'please repair my Laptop its HDD might be corrupt so come one 1 TB HP HDD so i can replace it... and also come with data recovery tool.. okay... come fast its necessery .. . tks in advance .',avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
+        // ];
+        // this.setState({items:itemsToSet,loading:false});
         return;
         
       }else{
-        console.log("yes internet ");
+        console.log("yes internet "); 
         fetch(Global.API_URL+'incoming_request', {
             method: 'POST',
             headers: {

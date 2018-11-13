@@ -116,10 +116,10 @@ static navigationOptions = {
               renderRow={(item) =>
                 <ListItem>
                   <Body>
-                    <Text><Icon active name="check-all" size={20} color='#1390c3'/>   {item.A}</Text>
+                    <Text><Icon active name="check-all" size={20} color='#1390c3'/>   {item.work}</Text>
                   </Body>
                   <Right>
-                    <Text>{item.B}</Text>
+                    <Text>{item.price}</Text>
                   </Right>
                 </ListItem>
               }>
@@ -263,7 +263,7 @@ static navigationOptions = {
                                           }} 
                                           onPress={()=>{this.props.navigation.navigate('EditWork',{
                                             workingHour:this.state.items1[1].B,
-                                            workType:"",
+                                            workList:this.state.items0,
                                             expYear:this.state.items1[0].B,
                                           })}}>
                                               <Icon name="settings" style={{ color: 'black' }}></Icon></Button>
