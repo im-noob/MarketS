@@ -40,7 +40,7 @@ static navigationOptions = {
         contactNO:"",
 
         mainwork:"",
-        avtar_url:"",
+        avtar_url:"../assets/images/icon.png",
         searched:"",
         contract:"",
         ratting:"",

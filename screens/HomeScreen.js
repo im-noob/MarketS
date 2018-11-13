@@ -8,18 +8,19 @@ import {
   View,
   ToastAndroid,
   TouchableOpacity,
-  Modal
+  Modal,
+  ScrollView
 } from "react-native";
-import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button,Item,Input} from 'native-base';
+import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnail,Button,Item,Input,Form,Label} from 'native-base';
 import Icon  from 'react-native-vector-icons/Feather';    
-import {  } from 'react-native-elements';
+import {Divider  } from 'react-native-elements';
 import Global from '../constants/Global';
 const {width} = Dimensions.get('window');
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: "Incoming Request",
-    backgroundColor:'#4285f4',
-    color:'#4285f4',
+    // backgroundColor:'#4285f4',
+    // color:'#4285f4',
   };
 
   constructor(props){
@@ -64,6 +65,8 @@ class ListRender extends React.Component{
         renderContentFlag:false,
         loading:true,
         SendBillVisible:false,
+        ViewRequet:false,
+        AddListSendBillVisible:false,
 
       }
   }
@@ -141,6 +144,18 @@ class ListRender extends React.Component{
   render(){
     
     var {items} = this.state;
+    var BillList = [
+       {work:'Simon Mignolet',price:'100',},
+       {work:'Nathaniel Clyne',price:'100',},
+       {work:'Dejan Lovren',price:'100',},
+       {work:'Mama Sakho',price:'100',},
+       {work:'Emre Can',price:'100',},
+       {work:'Simon Mignolet',price:'100',},
+       {work:'Nathaniel Clyne',price:'100',},
+       {work:'Dejan Lovren',price:'100',},
+       {work:'Mama Sakho',price:'100',},
+       {work:'Emre Can',price:'100',},
+    ];
     if(this.state.loading){
       return (
           <View style={styles.loder}>
@@ -167,7 +182,10 @@ class ListRender extends React.Component{
                             >
                               <Text>Send Bill</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignSelf:'center'}}>
+                            <TouchableOpacity 
+                                style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignSelf:'center'}}
+                                onPress={()=>{this.setState({ViewRequet:true,}) }}
+                            >
                               <Text>View</Text>
                             </TouchableOpacity>
                           </View>
@@ -185,7 +203,7 @@ class ListRender extends React.Component{
             </List>
             {/* SendBill Model */}
             <Modal
-                animationType="slide"
+                animationType='slide'
                 transparent={true}
                 visible={this.state.SendBillVisible}
                 onRequestClose={() => {
@@ -194,84 +212,120 @@ class ListRender extends React.Component{
                     })
                 }}>
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',backgroundColor:'#111111d6'}}>
-                    <View style={{ width: width*(0.70), height: 300,backgroundColor:"#ffffff"}}>
+                    <View style={{ width: width*(0.95), height: 500,backgroundColor:"#ffffff"}}>
                         <TouchableOpacity onPress={()=>{this.setState({SendBillVisible:false})}}>
                             <Icon name="x-square" style={{alignSelf:'flex-end',fontSize:30}}/>
                         </TouchableOpacity>
-                        <Text style={{fontSize:30,alignSelf:'center'}}>Sign Up</Text>
-                        <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
-                            <Item regular style={{marginVertical:2}}>
-                                <Input 
-                                    placeholder='Full Name' 
-                                    onChangeText={(text) => this.setState({reg_name:text})}
-                                    textContentType='name'
-                                    returnKeyType='next'
-                                    onSubmitEditing={()=>{}}
-                                />
-                            </Item>
-                            <Item regular style={{marginVertical:2}}>
-                                <Input 
-                                    placeholder='Email' 
-                                    onChangeText={(text) => this.setState({reg_email:text})}
-                                    textContentType='emailAddress'
-                                    returnKeyType='next'
-                                    onSubmitEditing={()=>{}}
-                                    keyboardType='email-address'
-
-                                />
-                            </Item>
-                            <Item regular style={{marginVertical:2}}>
-                                <Input 
-                                    placeholder='Phone NO'
-                                    onChangeText={(text) => this.setState({reg_phone:text})}
-                                    textContentType='telephoneNumber'
-                                    returnKeyType='next'
-                                    onSubmitEditing={()=>{}}
-                                    keyboardType='numeric'
-
-                                />
-                            </Item>
-                            <Item regular style={{marginVertical:2}}>
-                                <Input 
-                                    placeholder='Password'
-                                    onChangeText={(text) => this.setState({reg_password:text})}
-                                    textContentType='password' 
-                                    returnKeyType='next'
-                                    onSubmitEditing={()=>{}}
-                                    secureTextEntry={true}
-                                    keyboardType='visible-password'
-                                />
-                            </Item>    
-                            <Item regular style={{marginVertical:2}}>
-                                <Input 
-                                    placeholder='Confirm password'
-                                    onChangeText={(text) => this.setState({reg_confirm:text})}
-                                    textContentType='password' 
-                                    returnKeyType='go'
-                                    onSubmitEditing={this.submitRegister}
-                                    secureTextEntry={true}
-                                    keyboardType='visible-password'
-                                />
-                            </Item>                 
-                            <Button rounded success block style={{marginVertical:4}} 
-                                onPress={this.submitRegister}
-                                disabled={this.state.reg_submitButtonDisable}
-                            >
-                                <Text>Sign Up</Text>
-                            </Button>
-                            <View style={{marginVertical:6}}>
-                                <Text style={{fontSize:14,alignSelf:'center',color:'#6f6f6f'}}>Clicking Sign Up means that you are agree to the</Text>
-                                <View style={{flexDirection:'row',alignSelf:'center'}}>
-                                    <TouchableOpacity onPress={()=>{Linking.openURL("https://google.com")}}><Text style={{fontSize:14,color:'#2da2d6'}}>Terms & Conditions</Text></TouchableOpacity>
-                                    <Text style={{fontSize:14,color:'#6f6f6f'}}> and </Text>
-                                    <TouchableOpacity onPress={()=>{Linking.openURL("https://google.com")}}><Text style={{fontSize:14,color:'#2da2d6'}}>Privacy Policy.</Text></TouchableOpacity>                                            
-                                </View>
-                            </View>
+                        <Text style={{fontSize:30,alignSelf:'center'}}>Send Bill</Text>
+                        <Divider style={{ backgroundColor: '#ff5722' }} />
+                        <View style={{flexDirection:'row',padding:4,paddingHorizontal:10,}}>
+                            <Text style={{margin:10,flex:1,fontSize:24}}>Bill List</Text>
+                            <Button rounded warning transparent 
+                                style={{flex:1,borderBottomColor:'red',borderWidth:1}}
+                                onPress={()=>{
+                                  this.setState({AddListSendBillVisible:true})
+                                }}
+                            ><Text>Add List</Text></Button>
+                        </View>
+                        <ScrollView>
+                          <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
+                              <List dataArray={BillList}
+                                renderRow={(item) =>
+                                  <ListItem style={{flexDirection:'row'}}>
+                                    <Text style={{flex:5}}>{item.work}</Text>
+                                    <Text style={{flex:5,alignSelf:'center'}}>{item.price}</Text>
+                                    <TouchableOpacity><Icon style={{flex:2,fontSize:25}} name='edit'/></TouchableOpacity>
+                                    <TouchableOpacity><Icon style={{flex:2,fontSize:25}} name='x'/></TouchableOpacity>
+                                  </ListItem>
+                                }>
+                              </List>
+                          </View>
+                        </ScrollView>
+                        <Divider style={{ backgroundColor: '#ff5722' }} />
+                        <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
+                            <Button transparent onPress={()=>{this.setState({SendBillVisible:false})}}><Text>Cancle</Text></Button>
+                            <Button transparent onPress={()=>{this.setState({SendBillVisible:false})}}><Text>Send</Text></Button>
                         </View>
                     </View>
                 </View>
             </Modal>
             {/* SendBill modal end */}
+            {/* add list send bill Model */}
+            <Modal
+                animationType='slide'
+                transparent={true}
+                visible={this.state.AddListSendBillVisible}
+                onRequestClose={() => {
+                    this.setState({
+                        AddListSendBillVisible:false
+                    })
+                }}>
+                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',backgroundColor:'#111111d6'}}>
+                    <View style={{ width: width*(0.95), height: 300,backgroundColor:"#ffffff"}}>
+                        <TouchableOpacity onPress={()=>{this.setState({AddListSendBillVisible:false})}}>
+                            <Icon name="x-square" style={{alignSelf:'flex-end',fontSize:30}}/>
+                        </TouchableOpacity>
+                        <Text style={{fontSize:30,alignSelf:'center'}}>Add List</Text>
+                  
+                        <ScrollView>
+                          <View style={{ width: width*(0.95), alignSelf:'center',marginVertical:5}}>
+                            <Form>
+                              <Item inlineLabel>
+                                <Label style={{color:'#ff5722'}}>Title</Label>
+                                <Input 
+                                    underlineColorAndroid="black"
+                                />
+                              </Item>
+                              <Item inlineLabel last>
+                                <Label style={{color:'#ff5722'}}>Cost</Label>
+                                <Input
+                                    style={{marginRight:30}} 
+                                    underlineColorAndroid='black'
+                                />
+                              </Item>
+                            </Form>
+                          </View>
+                        </ScrollView>
+                        <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
+                            <Button transparent onPress={()=>{this.setState({AddListSendBillVisible:false})}}><Text>Cancle</Text></Button>
+                            <Button transparent onPress={()=>{this.setState({AddListSendBillVisible:false})}}><Text>Send</Text></Button>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* add list SendBill modal end */}
+            {/* View Model */}
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={this.state.ViewRequet}
+                onRequestClose={() => {
+                    this.setState({
+                        ViewRequet:false
+                    })
+                }}>
+                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',backgroundColor:'#111111d6'}}>
+                    <View style={{ width: width*(0.95), height: 500,backgroundColor:"#ffffff"}}>
+                        <TouchableOpacity onPress={()=>{this.setState({ViewRequet:false})}}>
+                            <Icon name="x-square" style={{alignSelf:'flex-end',fontSize:30}}/>
+                        </TouchableOpacity>
+                        <Text style={{fontSize:30,alignSelf:'center'}}>View Request</Text>
+                        <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
+                            <View style={{flexDirection:'row'}}>
+                                <Input/>
+                            </View>
+                                           
+                            <Button success style={{marginVertical:4,alignContent:'flex-end'}} 
+                                onPress={this.submitRegister}
+                                disabled={this.state.reg_submitButtonDisable}
+                            >
+                                <Text>Sign Up</Text>
+                            </Button>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* View modal end */}
       </Container>
       );
     }
