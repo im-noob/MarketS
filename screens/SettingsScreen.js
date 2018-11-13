@@ -4,7 +4,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
+  
   TouchableOpacity,
   View,
   Dimensions,
@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import MapView from 'react-native-maps';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Container, Content, List, Left, Body, Right, ListItem, Button,Card,CardItem,Thumbnail,Spinner } from 'native-base'
+import { Container, Content, List, Left, Body, Right, ListItem, Button,Card,CardItem,Thumbnail,Spinner,Text, } from 'native-base'
 import { createStackNavigator } from 'react-navigation';
 import EditProfile from './EditProfile';
 import EditWork from './EditWork';
@@ -73,7 +73,10 @@ static navigationOptions = {
     this.featchPorfileDataAfterLoginFromAsync();
     setTimeout(() => {this.setState({renderComponentFlag: true})}, 0);
   }
-
+  _signOutAsync = async () => {
+      await AsyncStorage.clear();
+      this.props.navigation.navigate('Auth');
+    };
   featchPorfileDataAfterLoginFromAsync = async () =>{
     //featching data form asysc storage
     var itemsToSet = JSON.parse(await AsyncStorage.getItem('userProfileData'));
@@ -104,22 +107,22 @@ static navigationOptions = {
           <Content>
             <ListItem icon>
               <Left>
-                <Text>Work</Text>
+                <Text style={{fontSize:16,fontWeight:'800'}}>Work</Text>
               </Left>
               <Body/>
               <Right>
-                <Text>Min-Max Rate</Text>
+                <Text style={{fontSize:16,fontWeight:'800'}}>Min-Max Rate</Text>
               </Right>
             </ListItem>
             
             <List dataArray={items0}
               renderRow={(item) =>
                 <ListItem>
-                  <Body>
-                    <Text><Icon active name="check-all" size={20} color='#1390c3'/>   {item.work}</Text>
-                  </Body>
+                  <Left>
+                    <Text style={{fontSize:14}}><Icon active name="check-all" size={18} color='#1390c3'/> {item.work}</Text>
+                  </Left>
                   <Right>
-                    <Text>{item.price}</Text>
+                    <Text style={{fontSize:14}}>{item.price}</Text>
                   </Right>
                 </ListItem>
               }>
@@ -136,11 +139,11 @@ static navigationOptions = {
             <List dataArray={items1}
               renderRow={(item) =>
                 <ListItem>
-                  <Body>
-                    <Text><Icon active name="check-all" size={20} color='#1390c3'/>   {item.A}</Text>
-                  </Body>
+                  <Left>
+                    <Text style={{fontSize:14}}><Icon active name="check-all" size={18} color='#1390c3'/> {item.A}</Text>
+                  </Left>
                   <Right>
-                    <Text>{item.B}</Text>
+                    <Text style={{fontSize:14}}>{item.B}</Text>
                   </Right>
                 </ListItem>
               }>
@@ -157,11 +160,11 @@ static navigationOptions = {
             <List dataArray={items2}
               renderRow={(item) =>
                 <ListItem>
-                  <Body>
-                    <Text><Icon active name="check-all" size={20} color='#1390c3'/>   {item.A}</Text>
-                  </Body>
+                  <Left>
+                    <Text style={{fontSize:14}}><Icon active name="check-all" size={18} color='#1390c3'/> {item.A}</Text>
+                  </Left>
                   <Right>
-                    <Text>{item.B}</Text>
+                    <Text style={{fontSize:14}}>{item.B}</Text>
                   </Right>
                 </ListItem>
               }>
@@ -273,10 +276,15 @@ static navigationOptions = {
                           </View>
 
                           <View style={{ paddingBottom: 10 }}>
-                              <View style={{ paddingHorizontal: 10 }}>
-                                  <Text style={{ fontWeight: 'bold' }}>{this.state.displayName}</Text>
-                                  <Text>{this.state.mainwork}</Text>
-                                  <Text>+91 {this.state.contactNO}</Text>
+                              <View style={{ flexDirection:'row',justifyContent:'space-between' }}>
+                                  <View style={{paddingHorizontal: 10 }}>
+                                      <Text style={{ fontWeight: 'bold',fontSize:25}}>{this.state.displayName}</Text>
+                                      <Text>{this.state.mainwork}</Text>
+                                      <Text>+91 {this.state.contactNO}</Text>
+                                  </View>
+                                  <Button danger rounded bordered style={{alignSelf:'center',marginRight: 10, marginLeft: 5,}} onPress={()=>{ alert("Simply Restart the app to logout"); this._signOutAsync(); }}>
+                                      <Text>Logout </Text>
+                                  </Button>
                               </View>
                           </View>
                       </View>

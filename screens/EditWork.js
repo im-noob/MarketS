@@ -440,7 +440,7 @@ export default class EditWork extends Component {
                     {/* Working Detailis:start */}
                     <View style={{marginVertical:10}}>
                         <ListItem itemDivider>
-                            <Text>Type your work seprated by Comma ( , )</Text>
+                            <Text>Type your work and min-max cost seprated by dash ( - )</Text>
                         </ListItem>
                         {/* <Textarea 
                             rowSpan={5} 
