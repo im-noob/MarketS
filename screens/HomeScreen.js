@@ -15,7 +15,7 @@ import { Container, Spinner,List,ListItem, Text,Content,Left,Right,Body,Thumbnai
 import Icon  from 'react-native-vector-icons/Feather';    
 import {Divider  } from 'react-native-elements';
 import Global from '../constants/Global';
-const {width} = Dimensions.get('window');
+const {width,height} = Dimensions.get('window');
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: "Incoming Request",
@@ -128,8 +128,8 @@ class ListRender extends React.Component{
           50,
         );
         var itemsToSet =  [
-          {req_id:'1', title:'Donald Trump',work_type:'Car Reparing',date:'28 Nov 2018 11:24 AM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/6d5170dcf49f011a0c016d4b572543d8/5C662705/t51.2885-19/s150x150/23823676_515039535523575_7479748231031685120_n.jpg'},
-          {req_id:'2', title:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contact:"",avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
+          {req_id:'1', clint_name:'Donald Trump',work_type:'Car Reparing',date:'28 Nov 2018 11:24 AM',contactNo:"8340669783",Message:'please repair my car',avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/6d5170dcf49f011a0c016d4b572543d8/5C662705/t51.2885-19/s150x150/23823676_515039535523575_7479748231031685120_n.jpg'},
+          {req_id:'2', clint_name:'Akshay Kumar',work_type:'Laptop Reparing',date:'25 Nov 2018 2:38 PM',contactNo:"8340669783",Message:'please repair my Laptop its HDD might be corrupt so come one 1 TB HP HDD so i can replace it... and also come with data recovery tool.. okay... come fast its necessery .. . tks in advance .',avtar_url:'https://instagram.fpat1-1.fna.fbcdn.net/vp/ee936c0c7ea5ed553dc0be21928327b6/5C7C4289/t51.2885-19/s150x150/17265645_1686057661694242_1994307655182581760_a.jpg'},
         ];
         this.setState({items:itemsToSet,loading:false});
         return;
@@ -183,6 +183,14 @@ class ListRender extends React.Component{
       
       console.log("this is final",this.state.BillList,arr);
   }
+  _MakeViewArray = (input) =>{
+      var arrToPush = [];
+      for(var item in input){
+        if(item != 'avtar_url')
+            console.log(arrToPush.push({title:item,value:input[item]}));
+      }
+      this.setState({ViewArray:arrToPush});
+  }
   render(){
     
     var {items} = this.state;
@@ -204,7 +212,7 @@ class ListRender extends React.Component{
                         <Thumbnail source={{ uri: item.avtar_url }} />
                       </Left>
                       <Body>
-                          <Text>{item.title}</Text>
+                          <Text>{item.clint_name}</Text>
                           <Text note>Work Type: {item.work_type}</Text>
                           <Text note style={{color:'#3679e5'}}>{item.date}</Text>
                           <View style={{flexDirection:'row'}}>
@@ -224,7 +232,7 @@ class ListRender extends React.Component{
                             </TouchableOpacity>
                             <TouchableOpacity 
                                 style={{alignSelf:'center',margin:4,paddingHorizontal:15,paddingVertical:4,borderColor:'black',borderWidth:1,borderRadius:15,alignSelf:'center'}}
-                                onPress={()=>{this.setState({openViewRequest_ID:item.req_id,ViewRequet:true,}) }}
+                                onPress={()=>{this._MakeViewArray(item); this.setState({ViewRequet:true,}) }}
                             >
                               <Text>View</Text>
                             </TouchableOpacity>
@@ -263,7 +271,7 @@ class ListRender extends React.Component{
                             <Button rounded warning transparent 
                                 style={{flex:1,borderBottomColor:'red',borderWidth:1}}
                                 onPress={()=>{
-                                  this.setState({AddListSendBillVisible:true})
+                                  this.setState({AddListSendBillVisible:true,addListTitle:'',addListCost:''})
                                 }}
                             ><Text>Add List</Text></Button>
                         </View>
@@ -275,7 +283,8 @@ class ListRender extends React.Component{
                                     <Text style={{flex:5}}>{item.work}</Text>
                                     <Text style={{flex:5,alignSelf:'center'}}>{item.price}</Text>
                                     <TouchableOpacity onPress={()=>{
-
+                                        this._remove_list_item(item.list_id);
+                                        this.setState({AddListSendBillVisible:true,addListTitle:item.work,addListCost:item.price});
                                     }}><Icon style={{flex:2,fontSize:25}} name='edit'/></TouchableOpacity>
                                     <TouchableOpacity onPress={()=>{
                                         this._remove_list_item(item.list_id);
@@ -324,6 +333,7 @@ class ListRender extends React.Component{
                                     style={{marginRight:30}} 
                                     underlineColorAndroid="black"
                                     onChangeText={(text)=>{this.setState({addListTitle:text})}}
+                                    value={this.state.addListTitle}
                                 />
                               </Item>
                               <Item inlineLabel last>
@@ -333,6 +343,7 @@ class ListRender extends React.Component{
                                     underlineColorAndroid='black'
                                     onChangeText={(text)=>{this.setState({addListCost:text})}}
                                     keyboardType='numeric'
+                                    value={this.state.addListCost}
                                 />
                               </Item>
                             </Form>
@@ -365,22 +376,27 @@ class ListRender extends React.Component{
                     })
                 }}>
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',backgroundColor:'#111111d6'}}>
-                    <View style={{ width: width*(0.95), height: 500,backgroundColor:"#ffffff"}}>
+                    <View style={{ width: width*(0.95), height: height*(0.90),backgroundColor:"#ffffff"}}>
                         <TouchableOpacity onPress={()=>{this.setState({ViewRequet:false})}}>
                             <Icon name="x-square" style={{alignSelf:'flex-end',fontSize:30}}/>
                         </TouchableOpacity>
                         <Text style={{fontSize:30,alignSelf:'center'}}>View Request</Text>
-                        <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
-                            <View style={{flexDirection:'row'}}>
-                                <Input/>
-                            </View>
-                                           
-                            <Button success style={{marginVertical:4,alignContent:'flex-end'}} 
-                                onPress={this.submitRegister}
-                                disabled={this.state.reg_submitButtonDisable}
-                            >
-                                <Text>Sign Up</Text>
-                            </Button>
+                        <Divider style={{ backgroundColor: '#ff5722' }} />
+                        <ScrollView>
+                          <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
+                              <List dataArray={this.state.ViewArray}
+                                renderRow={(item) =>
+                                  <ListItem style={{flexDirection:'row'}}>
+                                    <Text style={{flex:5,fontWeight:'800',alignItems:'flex-end'}}>{item.title} :</Text>
+                                    <Text style={{flex:6,alignSelf:'center'}}>{item.value}</Text>
+                                  </ListItem>
+                                }>
+                              </List>
+                          </View>
+                        </ScrollView>
+                        <Divider style={{ backgroundColor: '#ff5722' }} />
+                        <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
+                            <Button transparent onPress={()=>{this.setState({ViewRequet:false})}}><Text>Back</Text></Button>
                         </View>
                     </View>
                 </View>
