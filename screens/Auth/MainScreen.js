@@ -174,6 +174,8 @@ export default class MainScreen extends Component {
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userProfileData', profileData);
         this.props.navigation.navigate('Home');
+        Global.USER_TOKEN = token;
+        console.log("GLobal token",Global.USER_TOKEN);
     };
     saveNotificationToken = () => {
         console.log("noti");
