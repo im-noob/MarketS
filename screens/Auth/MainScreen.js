@@ -138,6 +138,7 @@ export default class MainScreen extends Component {
                 body: JSON.stringify({
                     email:username,
                     password:password,
+                    user_type:'worker'
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
@@ -171,11 +172,14 @@ export default class MainScreen extends Component {
         console.log(connectionInfoLocal);
     }
     _signInAsync = async (token,profileData) => {
+        console.log("setting token");
         await AsyncStorage.setItem('userToken', token);
+        console.log("setting user data");
+
         await AsyncStorage.setItem('userProfileData', profileData);
+        console.log("sending to home");
         this.props.navigation.navigate('Home');
-        Global.USER_TOKEN = token;
-        console.log("GLobal token",Global.USER_TOKEN);
+        console.log("seneing to app");
     };
     saveNotificationToken = () => {
         console.log("noti");
@@ -241,6 +245,8 @@ export default class MainScreen extends Component {
                     'password':password,
                     'c_password':c_password,
                     'phone':phone,
+                    'user_type':'worker'
+
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
@@ -251,11 +257,12 @@ export default class MainScreen extends Component {
                     return;
                 }
                 var itemsToSet = responseJson.success.token; 
+                var profileData = responseJson.profileData;
                 if(responseJson.reg_done == 'yes'){
-                    if(itemsToSet.length != 0 ){
-                        this._signInAsync(itemsToSet);
-                        return;
-                    }    
+                    console.log("now calling to signin and sending to home");
+                    this._signInAsync(itemsToSet,JSON.stringify(profileData));
+                    this.setState({reg_submitButtonDisable:false});
+                    return;
                 }else{
                     alert("Invalid Email or Password");
                     this.setState({reg_submitButtonDisable:false});
@@ -405,7 +412,6 @@ export default class MainScreen extends Component {
                                                     returnKeyType='next'
                                                     onSubmitEditing={()=>{}}
                                                     secureTextEntry={true}
-                                                    keyboardType='visible-password'
                                                 />
                                             </Item>    
                                             <Item regular style={{marginVertical:2}}>
@@ -416,7 +422,6 @@ export default class MainScreen extends Component {
                                                     returnKeyType='go'
                                                     onSubmitEditing={this.submitRegister}
                                                     secureTextEntry={true}
-                                                    keyboardType='visible-password'
                                                 />
                                             </Item>                 
                                             <Button rounded success block style={{marginVertical:4}} 
