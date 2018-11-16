@@ -37,6 +37,9 @@ export default class EditProfile extends Component {
     }
     _handle_submit = async () =>{
         var KEY = await AsyncStorage.getItem('userToken');
+        var userID = await AsyncStorage.getItem('userID');
+        console.log("userid:");
+        console.log(userID);
         console.log(this.state.name);
         console.log(this.state.phoneno);
         console.log(this.state.city);
@@ -74,6 +77,7 @@ export default class EditProfile extends Component {
                     pincode:this.state.pincode,
                     address:this.state.address,
                     state:this.state.state,
+                    userID:userID,
                 })
             }).then((response) => response.json())
             .then((responseJson) => {

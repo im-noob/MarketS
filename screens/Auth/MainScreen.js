@@ -150,10 +150,12 @@ export default class MainScreen extends Component {
                 }
                 var itemsToSet = responseJson.success.token; 
                 var profileData = responseJson.profileData;
+                var userID = responseJson.userID;
+                console.log("userid",userID);
                 console.log(profileData);
                 if(responseJson.status == 'valid'){
                     if(itemsToSet.length != 0 ){
-                        this._signInAsync(itemsToSet,JSON.stringify(profileData));
+                        this._signInAsync(itemsToSet,JSON.stringify(profileData),userID);
                         return;
                     }    
                 }else{
@@ -171,10 +173,12 @@ export default class MainScreen extends Component {
         });
         console.log(connectionInfoLocal);
     }
-    _signInAsync = async (token,profileData) => {
+    _signInAsync = async (token,profileData,userID) => {
+        userID = userID + "";//converting to string
         console.log("setting token");
         await AsyncStorage.setItem('userToken', token);
         console.log("setting user data");
+        await AsyncStorage.setItem('userID', userID);
 
         await AsyncStorage.setItem('userProfileData', profileData);
         console.log("sending to home");
@@ -258,9 +262,10 @@ export default class MainScreen extends Component {
                 }
                 var itemsToSet = responseJson.success.token; 
                 var profileData = responseJson.profileData;
+                var userID = responseJson.userID;
                 if(responseJson.reg_done == 'yes'){
                     console.log("now calling to signin and sending to home");
-                    this._signInAsync(itemsToSet,JSON.stringify(profileData));
+                    this._signInAsync(itemsToSet,JSON.stringify(profileData),userID);
                     this.setState({reg_submitButtonDisable:false});
                     return;
                 }else{

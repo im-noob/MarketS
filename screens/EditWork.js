@@ -51,6 +51,8 @@ export default class EditWork extends Component {
     }
     _handle_submit = async () =>{
         var KEY = await AsyncStorage.getItem('userToken');
+        var userID = await AsyncStorage.getItem('userID');
+
         var workingHourSend = this.state.StartHour+":"+this.state.StartMin+":"+this.state.startAMPM+"-"+this.state.EndHour+":"+this.state.EndMin+":"+this.state.EndAMPM;
         console.log(workingHourSend);
         console.log(this.state.expYear);
@@ -83,11 +85,11 @@ export default class EditWork extends Component {
                     workingHour:workingHourSend,
                     expYear:this.state.expYear,
                     workList:this.state.workList,
-                   
+                    userID:userID,
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
-                // console.log("resp:",responseJson);
+                console.log("resp:",responseJson);
                 
                 var itemsToSet = responseJson.data; 
                 if(responseJson.data == "saved"){
@@ -99,6 +101,8 @@ export default class EditWork extends Component {
                         25,
                         50,
                     );
+                }else{
+                    alert("Internal Server Error 5000")
                 }
                 this.setState({
                     saveButtonDisable:false,
@@ -118,21 +122,21 @@ export default class EditWork extends Component {
     _getData = async () =>{
         var workingHour = this.state.StartHour+":"+this.state.StartMin+":"+this.state.startAMPM+"-"+this.state.EndHour+":"+this.state.EndMin+":"+this.state.EndAMPM; //10:00:AM-04:00:PM
         var oldProfileData = JSON.parse(await AsyncStorage.getItem('userProfileData'));
-        console.log('old data -----------------------------------J>');        
-        console.log(oldProfileData);
+        // console.log('old data -----------------------------------J>');        
+        // console.log(oldProfileData);
         oldProfileData.items0 = this.state.workList;
         oldProfileData.items1 = [
             {"A": "Work Experience(In year)","B": this.state.expYear,},
             {"A": "Working Hour","B": workingHour,},
         ];
 
-        console.log('new data -----------------------------------J>');        
-        console.log(oldProfileData);
+        // console.log('new data -----------------------------------J>');        
+        // console.log(oldProfileData);
         this._setData(JSON.stringify(oldProfileData));
     }
     _setData = async($data) =>{
-        console.log('new stinrg data-----------------------------------J>');        
-        console.log($data);
+        // console.log('new stinrg data-----------------------------------J>');        
+        // console.log($data);
         await AsyncStorage.setItem('userProfileData', $data);
     }
 
