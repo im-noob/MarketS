@@ -81,6 +81,7 @@ export default class EditProfile extends Component {
                 
                 var itemsToSet = responseJson.data; 
                 if(responseJson.data == "saved"){
+                    this._getData();
                     ToastAndroid.showWithGravityAndOffset(
                         'Sucessfully Saved!',
                         ToastAndroid.LONG,
@@ -103,6 +104,27 @@ export default class EditProfile extends Component {
         });
         console.log(connectionInfoLocal);
         
+    }
+    _getData = async () =>{
+        var oldProfileData = JSON.parse(await AsyncStorage.getItem('userProfileData'));
+        console.log(oldProfileData);
+        console.log('data get');
+        oldProfileData.displayName = this.state.name,
+        oldProfileData.contactNO = this.state.phoneno,
+        oldProfileData.items2 = [
+                {"A": "State","B": this.state.state,},
+                {"A": "City","B": this.state.city,},
+                {"A": "PinCode","B": this.state.pincode,},
+                {"A": "Address","B": this.state.address,},
+        ];
+        console.log("settng data");
+        console.log(oldProfileData);
+        this._setData(JSON.stringify(oldProfileData));
+    }
+    _setData = async($data) =>{
+        console.log("new profle data");
+        console.log($data);
+        await AsyncStorage.setItem('userProfileData', $data);
     }
     render() {
        if(this.state.renderComponentFlag){

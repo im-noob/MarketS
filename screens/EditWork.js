@@ -73,7 +73,7 @@ export default class EditWork extends Component {
         }else{
             console.log("yes internet ");
             this.setState({saveButtonDisable:true})
-            fetch(Global.API_URL+'updateProfileInfo', {
+            fetch(Global.API_URL+'updateWorkInfo', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -87,10 +87,11 @@ export default class EditWork extends Component {
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
-                console.log("resp:",responseJson);
+                // console.log("resp:",responseJson);
                 
                 var itemsToSet = responseJson.data; 
                 if(responseJson.data == "saved"){
+                    this._getData();
                     ToastAndroid.showWithGravityAndOffset(
                         'Sucessfully Saved!',
                         ToastAndroid.LONG,
@@ -113,6 +114,26 @@ export default class EditWork extends Component {
         });
         console.log(connectionInfoLocal);
         
+    }
+    _getData = async () =>{
+        var workingHour = this.state.StartHour+":"+this.state.StartMin+":"+this.state.startAMPM+"-"+this.state.EndHour+":"+this.state.EndMin+":"+this.state.EndAMPM; //10:00:AM-04:00:PM
+        var oldProfileData = JSON.parse(await AsyncStorage.getItem('userProfileData'));
+        console.log('old data -----------------------------------J>');        
+        console.log(oldProfileData);
+        oldProfileData.items0 = this.state.workList;
+        oldProfileData.items1 = [
+            {"A": "Work Experience(In year)","B": this.state.expYear,},
+            {"A": "Working Hour","B": workingHour,},
+        ];
+
+        console.log('new data -----------------------------------J>');        
+        console.log(oldProfileData);
+        this._setData(JSON.stringify(oldProfileData));
+    }
+    _setData = async($data) =>{
+        console.log('new stinrg data-----------------------------------J>');        
+        console.log($data);
+        await AsyncStorage.setItem('userProfileData', $data);
     }
 
     _renderHeader(title, expanded) {
