@@ -138,13 +138,20 @@ export default class MainScreen extends Component {
                 body: JSON.stringify({
                     email:username,
                     password:password,
-                    user_type:'worker'
+                    user_type:'worker',
+                    noti_token:Date()+"",
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
-                
+                console.log(responseJson);
                 if(responseJson.error != undefined){
+                    if(responseJson.error== "Unauthorised"){
+                        this.setState({submitButtonDisable:false});
+                        alert("Invalid Email or password");
+                        return;
+                    }
                     alert("Internal Server error 5004");
+                    
                     this.setState({submitButtonDisable:false});
                     return;
                 }
@@ -249,7 +256,8 @@ export default class MainScreen extends Component {
                     'password':password,
                     'c_password':c_password,
                     'phone':phone,
-                    'user_type':'worker'
+                    'user_type':'worker',
+                     noti_token:Date()+"",
 
                 })
             }).then((response) => response.json())
