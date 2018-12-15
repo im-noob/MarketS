@@ -105,6 +105,7 @@ class ListRender extends React.Component{
   renderData = async () => {
     var connectionInfoLocal = '';
     var KEY = await AsyncStorage.getItem('userToken');
+    var userID = await AsyncStorage.getItem('userID');
     NetInfo.getConnectionInfo().then((connectionInfo) => {
       console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
       // connectionInfo.type = 'none';//force local loding
@@ -127,6 +128,7 @@ class ListRender extends React.Component{
         
       }else{
         console.log("yes internet "); 
+        
         fetch(Global.API_URL+'incoming_request', {
             method: 'POST',
             headers: {
@@ -134,7 +136,7 @@ class ListRender extends React.Component{
                 'Authorization':'Bearer '+KEY,
             },
             body: JSON.stringify({
-              
+                userID:userID,
             })
         }).then((response) => response.json())
           .then((responseJson) => {
@@ -224,6 +226,7 @@ class ListRender extends React.Component{
                 body: JSON.stringify({
                     'BillList':BillList,
                     'req_id':req_id,
+                    userID:userID,
                 })
             }).then((response) => response.json())
             .then((responseJson) => {
