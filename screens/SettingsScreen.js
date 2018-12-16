@@ -119,7 +119,7 @@ static navigationOptions = {
               renderRow={(item) =>
                 <ListItem>
                   <Left>
-                    <Text style={{fontSize:14}}><Icon active name="check-all" size={18} color='#1390c3'/> {item.work}</Text>
+                    <Text style={{fontSize:14}}><Icon active name="check-all" size={18} color='#1390c3'/> {item.work_name}</Text>
                   </Left>
                   <Right>
                     <Text style={{fontSize:14}}>{item.price}</Text>
