@@ -5,6 +5,8 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import Settings from '../screens/SettingsScreen';
+import AppNavigator from './AppNavigator';
+import MainScreen from '../screens/Auth/MainScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -20,9 +22,19 @@ HomeStack.navigationOptions = {
   ),
 };
 
+const LogOuStack = createBottomTabNavigator({
+  Auth:{
+    screen:MainScreen,
+  }
+});
 
 const SettingsStack = createStackNavigator({
-  Settings: Settings,
+  Settings:{
+    screen:Settings,
+  },
+  AuthS:{
+    screen:LogOuStack,
+  },
 });
 
 SettingsStack.navigationOptions = {
