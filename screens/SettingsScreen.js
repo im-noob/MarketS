@@ -74,7 +74,7 @@ static navigationOptions = {
     setTimeout(() => {this.setState({renderComponentFlag: true})}, 0);
   }
   _signOutAsync = async () => {
-      // await AsyncStorage.clear();
+      await AsyncStorage.clear();
       this.props.navigation.navigate('AuthS');
     };
   featchPorfileDataAfterLoginFromAsync = async () =>{

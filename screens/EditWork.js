@@ -46,50 +46,59 @@ export default class EditWork extends Component {
             cat_subcat_data : [
                 {
                     category:'computer',subcategory:[
-                        {value:'Hard Disk1',key:'11'},
-                        {value:'CUP finshing1',key:'12'},
-                        {value:'Fan reparing1',key:'13'},
-                        {value:'Mother Board repring1',key:'14'},
-                        {value:'Spari part reparing1',key:'15'},
+                        {value:'Hard Disk1',key:'1'},
+                        {value:'CUP finshing1',key:'2'},
+                        {value:'Fan reparing1',key:'3'},
+                        {value:'Mother Board repring1',key:'4'},
+                        {value:'Spari part reparing1',key:'5'},
                     ],
                 },
                 {
                     category:'Tranport',subcategory:[
-                        {value:'Hard Disk2',key:'16'},
-                        {value:'CUP finshing2',key:'17'},
-                        {value:'Fan reparing2',key:'18'},
-                        {value:'Mother Board repring2',key:'19'},
-                        {value:'Spari part reparing2',key:'20'},
+                        {value:'Hard Disk2',key:'6'},
+                        {value:'CUP finshing2',key:'7'},
+                        {value:'Fan reparing2',key:'8'},
+                        {value:'Mother Board repring2',key:'9'},
+                        {value:'Spari part reparing2',key:'10'},
                     ],
                 },
                 {
                     category:'Electrics',subcategory:[
-                        {value:'Hard Disk3',key:'21'},
-                        {value:'CUP finshing3',key:'22'},
-                        {value:'Fan reparing3',key:'23'},
-                        {value:'Mother Board repring3',key:'24'},
-                        {value:'Spari part reparing',key:'25'},
+                        {value:'Hard Disk3',key:'11'},
+                        {value:'CUP finshing3',key:'12'},
+                        {value:'Fan reparing3',key:'13'},
+                        {value:'Mother Board repring3',key:'14'},
+                        {value:'Spari part reparing',key:'15'},
                     ],
                 },
                 {
                     category:'vechical',subcategory:[
-                        {value:'Hard Disk4',key:'26'},
-                        {value:'CUP finshing4',key:'27'},
-                        {value:'Fan reparing4',key:'28'},
-                        {value:'Mother Board repring4',key:'29'},
-                        {value:'Spari part reparing4',key:'30'},
+                        {value:'Hard Disk4',key:'16'},
+                        {value:'CUP finshing4',key:'17'},
+                        {value:'Fan reparing4',key:'18'},
+                        {value:'Mother Board repring4',key:'19'},
+                        {value:'Spari part reparing4',key:'20'},
                     ],
                 }
             ],
             SelectedCategory:'0',
             SelectedCategorykey:'0',
             SelectedSubCategory:'0',
-            subcategory_key:'0'
+            subcategory_key:'0',
+            removeElement:'',
+            // selectedPrice:'',
 
         }
     }
     componentDidMount() {
         setTimeout(() => {this.setState({renderComponentFlag: true})}, 0);
+        this.SetUpstates()
+    }
+    SetUpstates = () =>{
+        this.setState({
+            SelectedCategory:this.state.cat_subcat_data[0].category,
+            SelectedSubCategory:this.state.cat_subcat_data[0].subcategory[0].value,
+        })
     }
     _handle_submit = async () =>{
         var KEY = await AsyncStorage.getItem('userToken');
@@ -116,6 +125,7 @@ export default class EditWork extends Component {
             
         }else{
             console.log("yes internet ");
+            console.log("work list",this.state.workList);
             this.setState({saveButtonDisable:true})
             fetch(Global.API_URL+'updateWorkInfo', {
                 method: 'POST',
@@ -217,14 +227,15 @@ export default class EditWork extends Component {
     // }
     _remove_list_item = (item) =>{
         var arr = this.state.workList;
-        console.log("in delt list");
+        console.log("in delt list remvindg :"+item);
         console.log(arr);
         var indexOf = -1;
         // var index = arr.array1.forEach(function(element,index) {
         for(var i = 0 ; i < arr.length; i ++)
             if(arr[i].list_id == item)
               indexOf = i;
-        
+        if(indexOf == -1)
+            return;
         console.log("index",indexOf);
         arr.splice(indexOf,1);
         console.log("after remeoing list ",arr);
@@ -547,12 +558,20 @@ export default class EditWork extends Component {
                               <List dataArray={this.state.workList}
                                 renderRow={(item) =>
                                   <ListItem style={{flexDirection:'row'}}>
-                                    <Text style={{flex:5}}>{item.work}</Text>
+                                    <Text style={{flex:5}}>{
+                                            item.work_name
+                                        }</Text>
                                     <Text style={{flex:5,alignSelf:'center'}}>{item.price}</Text>
-                                    <TouchableOpacity onPress={()=>{
-                                        this._remove_list_item(item.list_id);
-                                        this.setState({AddWorkVisible:true,addWorkType:item.work,addWorkCost:item.price});
-                                    }}><Icon style={{flex:2,fontSize:25}} name='pencil'/></TouchableOpacity>
+                                    {/* <TouchableOpacity onPress={()=>{
+                                            console.log("cateogry an work",item.category,item.work);
+                                            this.setState({
+                                                            AddWorkVisible:true,
+                                                            SelectedCategory:item.category,
+                                                            SelectedSubCategory:item.work,
+                                                            addWorkCost:item.price,
+                                                            removeElement:item.list_id,
+                                                        });
+                                    }}><Icon style={{flex:2,fontSize:25}} name='pencil'/></TouchableOpacity> */}
                                     <TouchableOpacity onPress={()=>{
                                         this._remove_list_item(item.list_id);
                                     }}><Icon style={{flex:2,fontSize:25}} name='window-close'/></TouchableOpacity>
@@ -617,7 +636,16 @@ export default class EditWork extends Component {
                                                 mode="dropdown"
                                                 style={{  width: '70%',  }}
                                                 selectedValue={this.state.SelectedSubCategory}
-                                                onValueChange={(itemValue, itemIndex) => this.setState({SelectedSubCategory: itemValue,subcategory_key:itemIndex})}
+                                                onValueChange={(itemValue, itemIndex) =>{
+                                                        var subcategory_key = "";
+                                                       
+                                                        sub_category_list_arr.map((value,key)=>{
+                                                            console.log(value.value ,"==",itemValue);
+                                                            if(value.value == itemValue)
+                                                                subcategory_key = value.key;                                                        })
+                                                        console.log("in picker change:",subcategory_key);
+                                                        this.setState({SelectedSubCategory: itemValue,subcategory_key:subcategory_key
+                                                    })}}
                                                 >
                                                 {sub_category_list}
                                             </Picker>
@@ -639,11 +667,20 @@ export default class EditWork extends Component {
                                 <View style={{alignContent:'flex-end',flexDirection:'row',alignItems:'flex-end',alignSelf:'flex-end'}}>
                                     <Button transparent onPress={()=>{this.setState({AddWorkVisible:false})}}><Text>Cancle</Text></Button>
                                     <Button transparent onPress={()=>{
-
+                                        var removeElement  = this.state.removeElement;
+                                        console.log("remove elemnt:"+removeElement);
+                                        this._remove_list_item(removeElement);
+                                        
                                         var temparr = this.state.workList;
-                                        console.log("worklist",this.state.workList);
-                                        temparr.push({work:this.state.subcategory_key,price:this.state.addWorkCost,list_id:temparr.length+1});
-                                        this.setState({AddWorkVisible:false,workList:temparr})
+                                        console.log("subcategory_key",this.state.subcategory_key);
+                                        temparr.push({
+                                                        work:this.state.subcategory_key,
+                                                        category:this.state.SelectedCategorykey,
+                                                        price:this.state.addWorkCost,
+                                                        work_name:this.state.SelectedSubCategory,
+                                                        list_id:temparr.length+1
+                                                    });
+                                        this.setState({AddWorkVisible:false,workList:temparr,removeElement:''})
                                     }}><Text>Add</Text></Button>
                                 </View>
                             </View>
