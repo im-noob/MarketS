@@ -43,6 +43,48 @@ export default class EditWork extends Component {
             AddWorkVisible:false,
             addWorkCost:'',
             addWorkType:'',
+            cat_subcat_data : [
+                {
+                    category:'computer',subcategory:[
+                        {value:'Hard Disk1',key:'11'},
+                        {value:'CUP finshing1',key:'12'},
+                        {value:'Fan reparing1',key:'13'},
+                        {value:'Mother Board repring1',key:'14'},
+                        {value:'Spari part reparing1',key:'15'},
+                    ],
+                },
+                {
+                    category:'Tranport',subcategory:[
+                        {value:'Hard Disk2',key:'16'},
+                        {value:'CUP finshing2',key:'17'},
+                        {value:'Fan reparing2',key:'18'},
+                        {value:'Mother Board repring2',key:'19'},
+                        {value:'Spari part reparing2',key:'20'},
+                    ],
+                },
+                {
+                    category:'Electrics',subcategory:[
+                        {value:'Hard Disk3',key:'21'},
+                        {value:'CUP finshing3',key:'22'},
+                        {value:'Fan reparing3',key:'23'},
+                        {value:'Mother Board repring3',key:'24'},
+                        {value:'Spari part reparing',key:'25'},
+                    ],
+                },
+                {
+                    category:'vechical',subcategory:[
+                        {value:'Hard Disk4',key:'26'},
+                        {value:'CUP finshing4',key:'27'},
+                        {value:'Fan reparing4',key:'28'},
+                        {value:'Mother Board repring4',key:'29'},
+                        {value:'Spari part reparing4',key:'30'},
+                    ],
+                }
+            ],
+            SelectedCategory:'0',
+            SelectedCategorykey:'0',
+            SelectedSubCategory:'0',
+            subcategory_key:'0'
 
         }
     }
@@ -211,6 +253,19 @@ export default class EditWork extends Component {
     //         ] 
     //     },
     // ];
+        var cat_subcat_data = this.state.cat_subcat_data;
+
+        var SelectedCategorykey = this.state.SelectedCategorykey;
+        console.log("selectec aeegor key"+SelectedCategorykey);
+        var sub_category_list_arr = this.state.cat_subcat_data[SelectedCategorykey].subcategory;
+
+        let category_list = cat_subcat_data.map( (s, i) => {
+            return <Picker.Item key={i} value={s.category} label={s.category} />
+        });
+        let sub_category_list = sub_category_list_arr.map((value,key)=>{
+            return <Picker.Item key={value.key} value={value.value} label={value.value}/>
+        })
+
         if(this.state.renderComponentFlag){
             return (
                 <Container>
@@ -513,7 +568,7 @@ export default class EditWork extends Component {
                             <Text>Save</Text>
                         </Button>
                     </Card>
-                    
+
                       
                         
     
@@ -541,27 +596,43 @@ export default class EditWork extends Component {
                                 <ScrollView>
                                 <View style={{ width: width*(0.95), alignSelf:'center',marginVertical:5}}>
                                     <Form>
-                                    <Item inlineLabel>
-                                        <Label style={{color:'#ff5722'}}>Title</Label>
-                                        <Input 
-                                            style={{marginRight:30}} 
-                                            underlineColorAndroid="black"
-                                            onChangeText={(text)=>{this.setState({addWorkType:text})}}
-                                            value={this.state.addWorkType}
-                                            placeholder="Car reparing, Mobile Reparing, etc."
-                                        />
-                                    </Item>
-                                    <Item inlineLabel last>
-                                        <Label style={{color:'#ff5722'}}>Cost</Label>
-                                        <Input
-                                            style={{marginRight:30}} 
-                                            underlineColorAndroid='black'
-                                            onChangeText={(text)=>{this.setState({addWorkCost:text})}}
-                                            keyboardType='numeric'
-                                            value={this.state.addWorkCost}
-                                            placeholder="Min-Max rate like(200-500)"
-                                        />
-                                    </Item>
+                                        <Item inlineLabel>
+                                            <Label style={{color:'#ff5722'}}>Category</Label>
+                                            <Picker
+                                                
+                                                mode="dropdown"
+                                                style={{  width: '70%', height:32 }}
+                                                selectedValue={this.state.SelectedCategory}
+                                                onValueChange={(itemValue, itemIndex) => this.setState({SelectedCategory: itemValue,SelectedCategorykey:itemIndex})}
+                                                >
+                                                {category_list}
+                                                    
+                
+                                            </Picker>
+                    
+                                        </Item>
+                                        <Item inlineLabel>
+                                            <Label style={{color:'#ff5722'}}>Sub Cate.</Label>
+                                            <Picker
+                                                mode="dropdown"
+                                                style={{  width: '70%',  }}
+                                                selectedValue={this.state.SelectedSubCategory}
+                                                onValueChange={(itemValue, itemIndex) => this.setState({SelectedSubCategory: itemValue,subcategory_key:itemIndex})}
+                                                >
+                                                {sub_category_list}
+                                            </Picker>
+                                        </Item>
+                                        <Item inlineLabel last>
+                                            <Label style={{color:'#ff5722'}}>Cost</Label>
+                                            <Input
+                                                style={{marginRight:30}} 
+                                                underlineColorAndroid='black'
+                                                onChangeText={(text)=>{this.setState({addWorkCost:text})}}
+                                                keyboardType='numeric'
+                                                value={this.state.addWorkCost}
+                                                placeholder="Min-Max rate like(200-500)"
+                                            />
+                                        </Item>
                                     </Form>
                                 </View>
                                 </ScrollView>
@@ -571,7 +642,7 @@ export default class EditWork extends Component {
 
                                         var temparr = this.state.workList;
                                         console.log("worklist",this.state.workList);
-                                        temparr.push({work:this.state.addWorkType,price:this.state.addWorkCost,list_id:temparr.length+1});
+                                        temparr.push({work:this.state.subcategory_key,price:this.state.addWorkCost,list_id:temparr.length+1});
                                         this.setState({AddWorkVisible:false,workList:temparr})
                                     }}><Text>Add</Text></Button>
                                 </View>
