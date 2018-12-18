@@ -42,7 +42,8 @@ export default class EditWork extends Component {
             loading:true,
             saveButtonDisable:false,
             AddWorkVisible:false,
-            addWorkCost:'',
+            addWorkCostMin:'',
+            addWorkCostMax:'',
             addWorkType:'',
             cat_subcat_data : [],
             SelectedCategory:'0',
@@ -60,11 +61,12 @@ export default class EditWork extends Component {
                 
                 this.setState({renderComponentFlag: true
             })}, 0);
-        this.SetUpstates()
+        this.SetUpstates();
+        this.setState({loading:false});
     }
     componentWillMount(){
-        this.getCatAndSubCat();
-        this.renderCatSubCatData();
+        this.getDefaultCatAndSubCat();
+        // this.renderCatSubCatData();
     }
 
     renderCatSubCatData = async () => {
@@ -111,7 +113,7 @@ export default class EditWork extends Component {
         console.log(connectionInfoLocal);
         
     }
-    getCatAndSubCat = () =>{
+    getDefaultCatAndSubCat = () =>{
         console.log("category and sub categor data setup");
         this.setState({
             cat_subcat_data:[
@@ -579,7 +581,7 @@ export default class EditWork extends Component {
                             <Button rounded warning transparent 
                                 style={{flex:1,borderBottomColor:'red',borderWidth:1}}
                                 onPress={()=>{
-                                  this.setState({AddWorkVisible:true,addWorkType:'',addWorkCost:''})
+                                  this.setState({AddWorkVisible:true,addWorkType:'',addWorkCostMin:'',addWorkCostMax:''})
                                 }}
                             ><Text>Add List</Text></Button>
                         </View>
@@ -682,14 +684,28 @@ export default class EditWork extends Component {
                                         </Item>
                                         <Item inlineLabel last>
                                             <Label style={{color:'#ff5722'}}>Cost</Label>
-                                            <Input
-                                                style={{marginRight:30}} 
-                                                underlineColorAndroid='black'
-                                                onChangeText={(text)=>{this.setState({addWorkCost:text})}}
-                                                keyboardType='numeric'
-                                                value={this.state.addWorkCost}
-                                                placeholder="Min-Max rate like(200-500)"
-                                            />
+                                            <View style={{flexDirection:'row'}}>
+                                                <Input
+                                                    style={{}} 
+                                                    underlineColorAndroid='black'
+                                                    onChangeText={(text)=>{this.setState({addWorkCostMin:text})}}
+                                                    keyboardType='numeric'
+                                                    value={this.state.addWorkCostMin}
+                                                    placeholder="Min"
+                                                    length = '5'
+                                                />
+                                                <Label style={{marginLeft:10,alignContent:'center',alignItems:'center',alignSelf:'center',fontSize:30}}>-</Label>
+                                                <Input
+                                                    style={{marginRight:70}} 
+                                                    underlineColorAndroid='black'
+                                                    onChangeText={(text)=>{this.setState({addWorkCostMax:text})}}
+                                                    keyboardType='numeric'
+                                                    value={this.state.addWorkCostMax}
+                                                    placeholder="Max"
+                                                    length = "5"
+                                                />
+                                            </View>
+                                            
                                         </Item>
                                     </Form>
                                 </View>
@@ -706,7 +722,7 @@ export default class EditWork extends Component {
                                         temparr.push({
                                                         work:this.state.subcategory_key,
                                                         category:this.state.SelectedCategorykey,
-                                                        price:this.state.addWorkCost,
+                                                        price:this.state.addWorkCostMin+"-"+this.state.addWorkCostMax,
                                                         work_name:this.state.SelectedSubCategory,
                                                         list_id:temparr.length+1
                                                     });
