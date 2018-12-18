@@ -282,7 +282,7 @@ static navigationOptions = {
                                       <Text>{this.state.mainwork}</Text>
                                       <Text>+91 {this.state.contactNO}</Text>
                                   </View>
-                                  <Button danger rounded bordered style={{alignSelf:'center',marginRight: 10, marginLeft: 5,}} onPress={()=>{ this._signOutAsync(); }}>
+                                  <Button danger rounded bordered style={{alignSelf:'center',marginRight: 10, marginLeft: 5,}} onPress={()=>{alert("you are logout successfully"); this._signOutAsync(); }}>
                                       <Text>Logout </Text>
                                   </Button>
                               </View>

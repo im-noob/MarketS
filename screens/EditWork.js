@@ -66,7 +66,7 @@ export default class EditWork extends Component {
     }
     componentWillMount(){
         this.getDefaultCatAndSubCat();
-        // this.renderCatSubCatData();
+        this.renderCatSubCatData();
     }
 
     renderCatSubCatData = async () => {
