@@ -39,48 +39,12 @@ export default class EditWork extends Component {
             EndAMPM:workingHour.split("-")[1].split(":")[2],
             workList:props.navigation.getParam('workList', []),
             renderComponentFlag:false,
+            loading:true,
             saveButtonDisable:false,
             AddWorkVisible:false,
             addWorkCost:'',
             addWorkType:'',
-            cat_subcat_data : [
-                {
-                    category:'computer',subcategory:[
-                        {value:'Hard Disk1',key:'1'},
-                        {value:'CUP finshing1',key:'2'},
-                        {value:'Fan reparing1',key:'3'},
-                        {value:'Mother Board repring1',key:'4'},
-                        {value:'Spari part reparing1',key:'5'},
-                    ],
-                },
-                {
-                    category:'Tranport',subcategory:[
-                        {value:'Hard Disk2',key:'6'},
-                        {value:'CUP finshing2',key:'7'},
-                        {value:'Fan reparing2',key:'8'},
-                        {value:'Mother Board repring2',key:'9'},
-                        {value:'Spari part reparing2',key:'10'},
-                    ],
-                },
-                {
-                    category:'Electrics',subcategory:[
-                        {value:'Hard Disk3',key:'11'},
-                        {value:'CUP finshing3',key:'12'},
-                        {value:'Fan reparing3',key:'13'},
-                        {value:'Mother Board repring3',key:'14'},
-                        {value:'Spari part reparing',key:'15'},
-                    ],
-                },
-                {
-                    category:'vechical',subcategory:[
-                        {value:'Hard Disk4',key:'16'},
-                        {value:'CUP finshing4',key:'17'},
-                        {value:'Fan reparing4',key:'18'},
-                        {value:'Mother Board repring4',key:'19'},
-                        {value:'Spari part reparing4',key:'20'},
-                    ],
-                }
-            ],
+            cat_subcat_data : [],
             SelectedCategory:'0',
             SelectedCategorykey:'0',
             SelectedSubCategory:'0',
@@ -91,8 +55,74 @@ export default class EditWork extends Component {
         }
     }
     componentDidMount() {
-        setTimeout(() => {this.setState({renderComponentFlag: true})}, 0);
+
+        setTimeout(() => {
+                
+                this.setState({renderComponentFlag: true
+            })}, 0);
         this.SetUpstates()
+    }
+    componentWillMount(){
+        this.getCatAndSubCat();
+        this.renderCatSubCatData();
+    }
+
+    renderCatSubCatData = async () => {
+        var connectionInfoLocal = '';
+        var KEY = await AsyncStorage.getItem('userToken');
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+          console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+          // connectionInfo.type = 'none';//force local loding
+          if(connectionInfo.type == 'none'){
+            console.log("no internet ");
+            
+            ToastAndroid.showWithGravityAndOffset(
+              'Oops! No Internet Connection',
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              25,
+              50,
+            );
+            return;
+            
+          }else{
+            console.log("yes internet "); 
+            
+            fetch(Global.API_URL+'get_cat_subCat', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization':'Bearer '+KEY,
+                },
+                body: JSON.stringify({  })
+            }).then((response) => response.json())
+              .then((responseJson) => {
+                  
+                  var itemsToSet = responseJson.data; 
+                  console.log("resp:",itemsToSet);
+                  this.setState({cat_subcat_data:itemsToSet,loading:false});
+            }).catch((error) => {
+                alert("network Failed");
+                console.log("on error featching:"+error);
+                this.setState({loading:false});
+            });
+          }
+        });
+        console.log(connectionInfoLocal);
+        
+    }
+    getCatAndSubCat = () =>{
+        console.log("category and sub categor data setup");
+        this.setState({
+            cat_subcat_data:[
+                {
+                    "category":"Category","subcategory":[
+                        {"value":"Sub Category","key":"1"},
+                        
+                    ],
+                },
+            ],
+        })
     }
     SetUpstates = () =>{
         this.setState({
@@ -277,7 +307,7 @@ export default class EditWork extends Component {
             return <Picker.Item key={value.key} value={value.value} label={value.value}/>
         })
 
-        if(this.state.renderComponentFlag){
+        if(this.state.renderComponentFlag && this.state.loading == false ){
             return (
                 <Container>
                     <Content>
