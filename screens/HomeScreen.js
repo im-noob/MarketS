@@ -143,6 +143,7 @@ class ListRender extends React.Component{
               
               var itemsToSet = responseJson.data; 
               console.log("resp:",responseJson);
+              console.log("Length:",itemsToSet.length);
               this.setState({items:itemsToSet,loading:false});
         }).catch((error) => {
             alert("updated slow network");
@@ -267,6 +268,9 @@ class ListRender extends React.Component{
     }else{
       return(
         <Container>
+            {
+                this.state.items.length == 0 && <Text style ={{fontSize:20,alignContent:'center',alignItems:'center',alignSelf:'center',justifyContent:'center'}}>Oops!! No Work Avilable Update your Profile to get jobs quickly</Text> 
+            }
             <List dataArray={items}
               renderRow={(item) =>
                   <ListItem avatar style={{borderBottomWidth:1,borderBottomColor:'#c9c9c9'}}>
@@ -312,6 +316,7 @@ class ListRender extends React.Component{
                   </ListItem>
               }>
             </List>
+
             {/* SendBill Model */}
             <Modal
                 animationType='slide'
