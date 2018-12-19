@@ -36,6 +36,22 @@ export default class MainScreen extends Component {
             reg_password:'',
             reg_confirm:'',
             reg_submitButtonDisable:false,
+
+            reg_name_valid_color:'white',
+            reg_email_valid_color:'white',
+            reg_phone_valid_color:'white',
+            reg_password_valid_color:'white',
+            reg_confirm_valid_color:'white',
+
+            reg_name_valid_icon:'check-circle',
+            reg_email_valid_icon:'check-circle',
+            reg_phone_valid_icon:'check-circle',
+            reg_password_valid_icon:'check-circle',
+            reg_confirm_valid_icon:'check-circle',
+
+            avilEmail:true,
+            avilPhone:true,
+
         }
     }
     componentDidMount() {
@@ -130,7 +146,7 @@ export default class MainScreen extends Component {
             var username = this.state.email_or_phone.toLowerCase();
             var password = this.state.password;
             console.log(username+":"+password);
-            fetch(Global.API_URL+'login', {
+            fetch(Global.API_URL+'login_S', {
                 method: 'POST',
                 headers: {
                     
@@ -172,7 +188,7 @@ export default class MainScreen extends Component {
                 
                     console.log("resp:",itemsToSet);
                 }).catch((error) => {
-                    alert("slow network");
+                    alert("Internal Server Error 500");
                     console.log("on error featching:"+error);
                     this.setState({submitButtonDisable:false});
             });
@@ -245,7 +261,7 @@ export default class MainScreen extends Component {
             var c_password = this.state.reg_confirm;
             var phone = this.state.reg_phone;
             console.log(name,":",email,":",password,":",c_password,":",phone);
-            fetch(Global.API_URL+'register', {
+            fetch(Global.API_URL+'register_S', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -281,7 +297,7 @@ export default class MainScreen extends Component {
                     this.setState({reg_submitButtonDisable:false});
                 }
                 }).catch((error) => {
-                    alert("slow network");
+                    alert("Internal Server Error 500");
                     console.log("on error featching:"+error);
                     this.setState({reg_submitButtonDisable:false});
             });
@@ -292,6 +308,187 @@ export default class MainScreen extends Component {
     validateEmail = (email) => {
         var re =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
+    }
+    validateName = (name)=>{
+        return !/[^a-zA-Z ]/.test(name);
+    }
+    validatephone = (phone) =>{
+        return /^[0-9]+$/.test(phone);
+    }
+    
+    REGcheckName =(text)=>{
+        // valdating name
+
+        if(text.trim().length != 0){
+            if(this.validateName(text) && text.length > 2){
+                this.setState({
+                    reg_name_valid_color:'green',
+                    reg_name_valid_icon:'check-circle'
+                });
+                console.log("valid name");
+            }else{
+                this.setState({
+                    reg_name_valid_color:'red',
+                    reg_name_valid_icon:'close-circle'
+                });
+            }
+        }
+    }
+    REGcheckEmail = (text) =>{
+        // valdating email
+        if(text.trim().length != 0 ){
+            if(this.validateEmail(text) && text.length > 5){
+                this.setState({
+                    reg_email_valid_color:'green',
+                    reg_email_valid_icon:'check-circle'
+                });
+                console.log("valid email");
+            }else{
+                this.setState({
+                    reg_email_valid_color:'red',
+                    reg_email_valid_icon:'close-circle'
+                });
+            }
+        }
+    }
+    REGcheckPhone = (text) =>{
+        //validation phone
+        if(text.trim().length != 0){
+            if(this.validatephone(text) && text.length == 10){
+                this.setState({
+                    reg_phone_valid_color:'green',
+                    reg_phone_valid_icon:'check-circle'
+                });
+                console.log("valid phone");
+            }else{
+                this.setState({
+                    reg_phone_valid_color:'red',
+                    reg_phone_valid_icon:'close-circle'
+                });
+            }
+        }
+    }
+    REGcheckPassword = (text) =>{
+        //validating password
+        if(text.trim().length != 0){
+            if(text.length >= 4){
+                this.setState({
+                    reg_password_valid_color:'green',
+                    reg_password_valid_icon:'check-circle'
+                });
+                console.log("valid password");
+            }else{
+                this.setState({
+                    reg_password_valid_color:'red',
+                    reg_password_valid_icon:'close-circle'
+                });
+            }
+        }
+    }
+    REGcheckConfirm = (text) =>{
+        if(this.state.reg_password == text){
+            this.setState({
+                reg_confirm_valid_icon:'check-circle',
+                reg_confirm_valid_color:'green',
+            })
+        }else{
+            this.setState({
+                reg_confirm_valid_icon:'close-circle',
+                reg_confirm_valid_color:'red',
+            })
+        }
+    }
+    checkAvilEmail = () =>{
+        // now sending request to login
+        console.log("Checking for avil email");
+
+        var connectionInfoLocal = '';
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+            console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+            if(connectionInfo.type == 'none'){
+                console.log("no internet ");
+                
+                ToastAndroid.showWithGravityAndOffset(
+                'Oops! No Internet Connection',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+                );        
+            }else{
+                console.log("yes internet ");
+                fetch(Global.API_URL+'AvilEmail', {
+                    method: 'POST',
+                    headers: {},
+                    body: JSON.stringify({
+                        email:this.state.reg_email,
+                        check:'email',
+                    })
+                }).then((response) => response.json())
+                .then((responseJson) => {
+                    var itemsToSet = responseJson.data ;
+                    console.log("resp:",itemsToSet);
+                    if(itemsToSet.status == true){
+                        this.setState({
+                            avilEmail:true,
+                        })
+                    }else{
+                        this.setState({
+                            avilEmail:false,
+                        })
+                    }
+
+                }).catch((error) => {
+                        alert("Internal Server Error 500");
+                        console.log("on error featching:"+error);
+                });
+            }
+        });
+    }
+    checkAvilPhone = () =>{
+        console.log("Checking for avil phone");
+        var connectionInfoLocal = '';
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+            console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+            if(connectionInfo.type == 'none'){
+                console.log("no internet ");
+                
+                ToastAndroid.showWithGravityAndOffset(
+                'Oops! No Internet Connection',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+                );        
+            }else{
+                console.log("yes internet ");
+                fetch(Global.API_URL+'AvilPhone', {
+                    method: 'POST',
+                    headers: {},
+                    body: JSON.stringify({
+                        phone:this.state.reg_phone,
+                        check:'phone',
+                    })
+                }).then((response) => response.json())
+                .then((responseJson) => {
+                    var itemsToSet = responseJson.data ;
+                    console.log("resp:",itemsToSet);
+                    if(itemsToSet.status == true){
+                        this.setState({
+                            avilPhone:true,
+                        })
+                    }else{
+                        this.setState({
+                            avilPhone:false,
+                        })
+                    }
+
+                }).catch((error) => {
+                        alert("Internal Server Error 500");
+                        console.log("on error featching:"+error);
+                });
+            }
+        });
     }
     render() {
         const {renderCoponentFlag} = this.state;
@@ -389,54 +586,94 @@ export default class MainScreen extends Component {
                                             <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Full Name' 
-                                                    onChangeText={(text) => this.setState({reg_name:text})}
+                                                    onChangeText={(text) => {
+                                                        this.REGcheckName(text);
+                                                        this.setState({reg_name:text})
+                                                    }}
                                                     textContentType='name'
                                                     returnKeyType='next'
-                                                    onSubmitEditing={()=>{}}
                                                 />
+                                                <Icon name={this.state.reg_name_valid_icon} style={{color:this.state.reg_name_valid_color,fontSize:25}}/>
                                             </Item>
-                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
+                                            { this.state.reg_name_valid_color == 'red' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Name Must be a Alphabate.</Text>
+                                            }
+                                            <Item  regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Email' 
-                                                    onChangeText={(text) => this.setState({reg_email:text})}
+                                                    onChangeText={(text) => {
+                                                        this.REGcheckEmail(text);
+                                                        this.setState({reg_email:text})
+                                                        this.checkAvilEmail();
+                                                    }}
                                                     textContentType='emailAddress'
                                                     returnKeyType='next'
-                                                    onSubmitEditing={()=>{}}
                                                     keyboardType='email-address'
 
                                                 />
+                                                <Icon name={this.state.reg_email_valid_icon} style={{color:this.state.reg_email_valid_color,fontSize:25}}/>
                                             </Item>
+                                            { this.state.reg_email_valid_color == 'red' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Not a Valid Email Format.</Text>
+                                            }
+                                            { this.state.avilEmail == false && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*This email is already registered with us.</Text>
+                                            }
                                             <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Phone NO'
-                                                    onChangeText={(text) => this.setState({reg_phone:text})}
+                                                    onChangeText={(text) => {
+                                                        this.REGcheckPhone(text);    
+                                                        this.setState({reg_phone:text})
+                                                        this.checkAvilPhone()
+                                                    }}
                                                     textContentType='telephoneNumber'
                                                     returnKeyType='next'
-                                                    onSubmitEditing={()=>{}}
-                                                    keyboardType='numeric'
+                                                    keyboardType='numeric'   
+
 
                                                 />
+                                                <Icon name={this.state.reg_phone_valid_icon} style={{color:this.state.reg_phone_valid_color,fontSize:25}}/>
                                             </Item>
+                                            { this.state.reg_phone_valid_color == 'red' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Phone no must be 10 Digit long.</Text>
+                                            }
+                                            { this.state.avilPhone == false && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*This moible no is already registered with us.</Text>
+                                            }
                                             <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Password'
-                                                    onChangeText={(text) => this.setState({reg_password:text})}
+                                                    onChangeText={(text) => {
+                                                        this.REGcheckPassword(text);
+                                                        this.setState({reg_password:text})
+                                                    }}
                                                     textContentType='password' 
                                                     returnKeyType='next'
-                                                    onSubmitEditing={()=>{}}
                                                     secureTextEntry={true}
                                                 />
-                                            </Item>    
+                                                <Icon name={this.state.reg_password_valid_icon} style={{color:this.state.reg_password_valid_color,fontSize:25}}/>
+                                            </Item>  
+                                            { this.state.reg_password_valid_color == 'red' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Password Must be at least 4 character Long.</Text>
+                                            }  
                                             <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Confirm password'
-                                                    onChangeText={(text) => this.setState({reg_confirm:text})}
+                                                    onChangeText={(text) => {
+                                                        this.REGcheckConfirm(text);
+                                                        this.setState({reg_confirm:text})
+                                                    }}
                                                     textContentType='password' 
                                                     returnKeyType='go'
                                                     onSubmitEditing={this.submitRegister}
                                                     secureTextEntry={true}
                                                 />
-                                            </Item>                 
+                                                <Icon name={this.state.reg_confirm_valid_icon} style={{color:this.state.reg_confirm_valid_color,fontSize:25}}/>
+                                            </Item>
+                                            { this.state.reg_confirm_valid_color == 'red' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Confirm password Don't Matched.</Text>
+                                            }                 
                                             <Button rounded success block style={{marginVertical:4}} 
                                                 onPress={this.submitRegister}
                                                 disabled={this.state.reg_submitButtonDisable}
