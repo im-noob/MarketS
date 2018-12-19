@@ -104,7 +104,7 @@ class ListRender extends React.Component{
   }
   renderData = async () => {
     var connectionInfoLocal = '';
-    var KEY = await AsyncStorage.getItem('userToken');
+    var KEY = await AsyncStorage.getItem('userToken_S');
     var userID = await AsyncStorage.getItem('userID');
     NetInfo.getConnectionInfo().then((connectionInfo) => {
       console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
@@ -186,7 +186,7 @@ class ListRender extends React.Component{
       this.setState({ViewArray:arrToPush});
   }
   sendBill = async () =>{
-        var KEY = await AsyncStorage.getItem('userToken');
+        var KEY = await AsyncStorage.getItem('userToken_S');
         if(this.state.BillList.length == 0 ){
             alert("No Bill!! Add one or more Form Add List")
             return;

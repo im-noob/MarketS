@@ -36,7 +36,7 @@ export default class EditProfile extends Component {
         setTimeout(() => {this.setState({renderComponentFlag: true})}, 0);
     }
     _handle_submit = async () =>{
-        var KEY = await AsyncStorage.getItem('userToken');
+        var KEY = await AsyncStorage.getItem('userToken_S');
         var userID = await AsyncStorage.getItem('userID');
         console.log("userid:");
         console.log(userID);

@@ -71,7 +71,7 @@ export default class EditWork extends Component {
 
     renderCatSubCatData = async () => {
         var connectionInfoLocal = '';
-        var KEY = await AsyncStorage.getItem('userToken');
+        var KEY = await AsyncStorage.getItem('userToken_S');
         NetInfo.getConnectionInfo().then((connectionInfo) => {
           console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
           // connectionInfo.type = 'none';//force local loding
@@ -133,7 +133,7 @@ export default class EditWork extends Component {
         })
     }
     _handle_submit = async () =>{
-        var KEY = await AsyncStorage.getItem('userToken');
+        var KEY = await AsyncStorage.getItem('userToken_S');
         var userID = await AsyncStorage.getItem('userID');
 
         var workingHourSend = this.state.StartHour+":"+this.state.StartMin+":"+this.state.startAMPM+"-"+this.state.EndHour+":"+this.state.EndMin+":"+this.state.EndAMPM;
