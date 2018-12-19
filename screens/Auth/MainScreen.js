@@ -333,20 +333,20 @@ export default class MainScreen extends Component {
                                     })
                                 }}>
                                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center',borderRadius:0.2,borderColor:'#fff'}}>
-                                    <View style={{ width: width*(0.95), height: 300,backgroundColor:"#ffffff",borderRadius:0.2,borderColor:'#fff'}}>
+                                    <View style={{ width: width*(0.95), height: 300,backgroundColor:"#ffffff",borderRadius:15,borderColor:'#fff'}}>
                                         <TouchableOpacity onPress={()=>{this.setState({loginModelVisible:false})}}>
                                             <Icon name="close-circle-outline" style={{alignSelf:'flex-end',fontSize:30}}/>
                                         </TouchableOpacity>
                                         <Text style={{fontSize:30,alignSelf:'center'}}>Sign In</Text>
                                         <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Email' 
                                                     onChangeText={(text) => this.setState({email_or_phone:text})}
                                                     textContentType='username'
                                                 />
                                             </Item>
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Password'
                                                     onChangeText={(text) => this.setState({password:text})} 
@@ -380,13 +380,13 @@ export default class MainScreen extends Component {
                                     })
                                 }}>
                                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                                    <View style={{ width: width*(0.95), height: 500,backgroundColor:"#ffffff"}}>
+                                    <View style={{ width: width*(0.95), height: 500,backgroundColor:"#ffffff",borderRadius:15,borderColor:'#fff'}}>
                                         <TouchableOpacity onPress={()=>{this.setState({signUpModelVisible:false})}}>
                                             <Icon name="close-circle-outline" style={{alignSelf:'flex-end',fontSize:30}}/>
                                         </TouchableOpacity>
                                         <Text style={{fontSize:30,alignSelf:'center'}}>Sign Up</Text>
                                         <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Full Name' 
                                                     onChangeText={(text) => this.setState({reg_name:text})}
@@ -395,7 +395,7 @@ export default class MainScreen extends Component {
                                                     onSubmitEditing={()=>{}}
                                                 />
                                             </Item>
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Email' 
                                                     onChangeText={(text) => this.setState({reg_email:text})}
@@ -406,7 +406,7 @@ export default class MainScreen extends Component {
 
                                                 />
                                             </Item>
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Phone NO'
                                                     onChangeText={(text) => this.setState({reg_phone:text})}
@@ -417,7 +417,7 @@ export default class MainScreen extends Component {
 
                                                 />
                                             </Item>
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Password'
                                                     onChangeText={(text) => this.setState({reg_password:text})}
@@ -427,7 +427,7 @@ export default class MainScreen extends Component {
                                                     secureTextEntry={true}
                                                 />
                                             </Item>    
-                                            <Item regular style={{marginVertical:2}}>
+                                            <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
                                                 <Input 
                                                     placeholder='Confirm password'
                                                     onChangeText={(text) => this.setState({reg_confirm:text})}
