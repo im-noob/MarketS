@@ -219,6 +219,20 @@ export default class MainScreen extends Component {
     // handle regiter 
     submitRegister = () =>{
         if(
+            this.state.reg_name_valid_color != 'green' ||
+            this.state.reg_phone_valid_color != 'green' ||
+            this.state.reg_email_valid_color != 'green' ||
+            this.state.reg_password_valid_color != 'green' ||
+            this.state.reg_confirm_valid_color != 'green' ||
+            this.state.avilEmail != true ||
+            this.state.avilPhone != true
+        ){
+            console.log(this.state.reg_name_valid_color,this.state.reg_phone_valid_color,this.state.reg_email_valid_color,
+                this.state.reg_password_valid_color,this.state.reg_confirm_valid_color ,this.state.avilEmail,this.state.avilPhone )
+            alert("All fields must be filled correctly.");
+            return;
+        }
+        if(
             this.state.reg_name.trim().length == 0 || 
             this.state.reg_email.trim().length == 0 || 
             this.state.reg_password.trim().length == 0 || 

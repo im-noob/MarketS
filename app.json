@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "MarketS Testing Map",
-    "description": "A very interesting project.",
-    "slug": "MarketS",
+    "name": "Market S",
+    "description": "A marketing App to provide service in local area.. it is part of \"GO Market\".\nDeveloped and maintained by Go market Team\n@Copyrights 2018",
+    "slug": "market-s",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": [
