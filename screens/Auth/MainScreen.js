@@ -10,6 +10,7 @@ import {
     Linking,
     NetInfo,
     AsyncStorage,
+    ToastAndroid,
 
 } from "react-native";
 import { Container, Spinner, Button,Text, Item,Input,CheckBox,Body} from 'native-base';
@@ -26,7 +27,9 @@ export default class MainScreen extends Component {
             renderCoponentFlag: false,
             loginModelVisible:false,
             signUpModelVisible:false,
+            forgotModelVisible:true,
             submitButtonDisable:false,
+            forgot_submitButtonDisable:false,
             email_or_phone:"",
             password:"",
 
@@ -51,6 +54,23 @@ export default class MainScreen extends Component {
 
             avilEmail:true,
             avilPhone:true,
+
+            // forgot passwrod
+            forgot_email:'',
+            forgot_email_edit:true,
+            forgot_email_valid_icon:'check-circle',
+            forgot_email_valid_color:'white',
+            forgot_avilEmail:true,
+            OTPEntered:'',
+            OTPreal:'0',
+            forgot_OTP_edit:true,
+
+            forgot_password_valid_icon:'check-circle',
+            forgot_confirm_valid_icon:'check-circle',
+            forgot_password_valid_color:'white',
+            forgot_confirm_valid_color:'white',
+            forgot_sendOTPButtonDisable:false,
+            askOTP:false,
 
         }
     }
@@ -212,9 +232,6 @@ export default class MainScreen extends Component {
         console.log("noti");
     }
     
-    forgetPasswrod =() =>{
-        this.props.navigation.navigate('ForgetPass');
-    }
 
     // handle regiter 
     submitRegister = () =>{
@@ -412,7 +429,7 @@ export default class MainScreen extends Component {
             })
         }
     }
-    checkAvilEmail = () =>{
+    checkAvilEmail = (text) =>{
         // now sending request to login
         console.log("Checking for avil email");
 
@@ -435,7 +452,7 @@ export default class MainScreen extends Component {
                     method: 'POST',
                     headers: {},
                     body: JSON.stringify({
-                        email:this.state.reg_email,
+                        email:text,
                         check:'email',
                     })
                 }).then((response) => response.json())
@@ -504,6 +521,301 @@ export default class MainScreen extends Component {
             }
         });
     }
+    // forgot password attat
+    forgotPasswordStart = ()=>{
+        this.setState({
+            loginModelVisible:false,
+            signUpModelVisible:false,
+            forgotModelVisible:true,
+
+             // forgot passwrod
+             forgot_email:'',
+             forgot_email_edit:true,
+             forgot_email_valid_icon:'check-circle',
+             forgot_email_valid_color:'white',
+             forgot_avilEmail:true,
+             OTPEntered:'',
+             OTPreal:'0',
+             forgot_OTP_edit:true,
+ 
+             forgot_password_valid_icon:'check-circle',
+             forgot_confirm_valid_icon:'check-circle',
+             forgot_password_valid_color:'white',
+             forgot_confirm_valid_color:'white',
+             forgot_sendOTPButtonDisable:false,
+             askOTP:false,
+        })
+    }
+    lastOTPSendSecCount = 0;
+    OTP = 0 ;
+    sendOTPForgot = () =>{
+        if(this.state.reg_email_valid_color == 'red' || this.state.forgot_avilEmail ){
+            alert("Invalid Email ");
+            return;
+        }
+        this.setState({
+            forgot_email_edit:false,
+            forgot_sendOTPButtonDisable:true,
+        });
+        var NOWSec = Math.floor(Date.now() / 1000);
+        // console.log(NOWSec - this.lastOTPSendSecCount);
+        if(NOWSec - this.lastOTPSendSecCount >= 60*5 ){
+            this.OTP = Math.floor(Math.random() * (+999999 - +100000)) + +100000;
+            this.setState({
+                OTPreal:this.OTP,
+            })
+            this.lastOTPSendSecCount = NOWSec;
+
+        }
+        if(this.state.forgot_password_valid_color == 'red' || this.state.forgot_confirm_valid_color == 'red'){
+            alert("Invalid Password");
+            return;
+        }
+        // now sending request to login
+        var connectionInfoLocal = '';
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+            console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+            if(connectionInfo.type == 'none'){
+                console.log("no internet ");
+                
+                ToastAndroid.showWithGravityAndOffset(
+                'Oops! No Internet Connection',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+                );        
+            }else{
+                console.log("yes internet ");
+                this.setState({forgot_sendOTPButtonDisable:true});
+                var name = this.state.reg_name;
+                var email = this.state.reg_email.toLowerCase();
+                var password = this.state.reg_password;
+                var c_password = this.state.reg_confirm;
+                var phone = this.state.reg_phone;
+                console.log(name,":",email,":",password,":",c_password,":",phone);
+                fetch(Global.API_URL+'send_OTP_S', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'email':email,
+                        'OTP':this.state.OTPreal,
+                        'user_type':'worker',
+                        noti_token:Date()+"",
+    
+                    })
+                }).then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                    if(responseJson.error != undefined){
+                        alert("Internal Server error 5004");
+                        this.setState({forgot_sendOTPButtonDisable:false});
+                        return;
+                    }
+                    if(responseJson.data.sendOTP == 'yes'){
+                        this.setState({askOTP:true});
+                        ToastAndroid.showWithGravityAndOffset(
+                            'OTP Sent! check your Email Folder Too..',
+                            ToastAndroid.LONG,
+                            ToastAndroid.BOTTOM,
+                            25,
+                            50,
+                            ); 
+                            
+                        return;
+                    }else{
+                        alert("Somthing wrong! password Not Changed!!");
+                        this.setState({forgot_sendOTPButtonDisable:false});
+                    }
+                    }).catch((error) => {
+                        alert("Internal Server Error 500");
+                        console.log("on error featching:"+error);
+                        this.setState({forgot_sendOTPButtonDisable:false});
+                });
+            }
+         });
+        console.log(this.OTP);
+        ToastAndroid.showWithGravityAndOffset(
+            'OTP For Testing'+this.OTP,
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+            );   
+        
+    }
+
+    // forgot pass
+    forgotcheckEmail = (text) =>{
+        // valdating email
+        if(text.trim().length != 0 ){
+            if(this.validateEmail(text) && text.length > 5){
+                this.setState({
+                    forgot_email_valid_color:'green',
+                    forgot_email_valid_icon:'check-circle'
+                });
+                console.log("valid email");
+            }else{
+                this.setState({
+                    forgot_email_valid_color:'red',
+                    forgot_email_valid_icon:'close-circle'
+                });
+            }
+        }
+    }
+
+    forgotcheckAvilEmail = (text) =>{
+        // now sending request to login
+        console.log("Checking for avil email");
+
+        var connectionInfoLocal = '';
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+            console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+            if(connectionInfo.type == 'none'){
+                console.log("no internet ");
+                
+                ToastAndroid.showWithGravityAndOffset(
+                'Oops! No Internet Connection',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+                );        
+            }else{
+                console.log("yes internet ");
+                fetch(Global.API_URL+'AvilEmail', {
+                    method: 'POST',
+                    headers: {},
+                    body: JSON.stringify({
+                        email:text,
+                        check:'email',
+                    })
+                }).then((response) => response.json())
+                .then((responseJson) => {
+                    var itemsToSet = responseJson.data ;
+                    console.log("respforgot_avilEmail:",itemsToSet);
+                    if(itemsToSet.status == true){
+                        this.setState({
+                            forgot_avilEmail:true,
+                        })
+                    }else{
+                        this.setState({
+                            forgot_avilEmail:false,
+                        })
+                    }
+
+                }).catch((error) => {
+                        alert("Internal Server Error 500");
+                        console.log("on error featching:"+error);
+                });
+            }
+        });
+    }
+    forgotcheckPassword = (text) =>{
+        //validating password
+        if(text.trim().length != 0){
+            if(text.length >= 4){
+                this.setState({
+                    forgot_password_valid_color:'green',
+                    forgot_password_valid_icon:'check-circle'
+                });
+                console.log("valid password");
+            }else{
+                this.setState({
+                    forgot_password_valid_color:'red',
+                    forgot_password_valid_icon:'close-circle'
+                });
+            }
+        }
+    }
+    forgotcheckConfirm = (text) =>{
+        if(this.state.forgot_password == text){
+            this.setState({
+                forgot_confirm_valid_icon:'check-circle',
+                forgot_confirm_valid_color:'green',
+            })
+        }else{
+            this.setState({
+                forgot_confirm_valid_icon:'close-circle',
+                forgot_confirm_valid_color:'red',
+            })
+        }
+    }
+    submitChangePassword = () =>{
+        if(this.state.forgot_password_valid_color == 'red' || this.state.forgot_confirm_valid_color == 'red'){
+            alert("Invalid Password");
+            return;
+        }
+        // now sending request to login
+        var connectionInfoLocal = '';
+        NetInfo.getConnectionInfo().then((connectionInfo) => {
+            console.log('Initial, type: ' + connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType);
+            if(connectionInfo.type == 'none'){
+                console.log("no internet ");
+                
+                ToastAndroid.showWithGravityAndOffset(
+                'Oops! No Internet Connection',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+                );        
+            }else{
+                console.log("yes internet ");
+                this.setState({forgot_submitButtonDisable:true});
+                var name = this.state.reg_name;
+                var email = this.state.reg_email.toLowerCase();
+                var password = this.state.reg_password;
+                var c_password = this.state.reg_confirm;
+                var phone = this.state.reg_phone;
+                console.log(name,":",email,":",password,":",c_password,":",phone);
+                fetch(Global.API_URL+'change_password_S', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        'email':email,
+                        'password':password,
+                        'c_password':c_password,
+                        'user_type':'worker',
+                        noti_token:Date()+"",
+    
+                    })
+                }).then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                    if(responseJson.error != undefined){
+                        alert("Internal Server error 5004");
+                        this.setState({forgot_submitButtonDisable:false});
+                        return;
+                    }
+                    if(responseJson.data.changed == 'yes'){
+                        this.setState({forgotModelVisible:false});
+                        ToastAndroid.showWithGravityAndOffset(
+                            'Password changed sucessfully',
+                            ToastAndroid.LONG,
+                            ToastAndroid.BOTTOM,
+                            25,
+                            50,
+                            ); 
+                        return;
+                    }else{
+                        alert("Somthing wrong! password Not Changed!!");
+                        this.setState({forgot_submitButtonDisable:false});
+                    }
+                    }).catch((error) => {
+                        alert("Internal Server Error 500");
+                        console.log("on error featching:"+error);
+                        this.setState({forgot_submitButtonDisable:false});
+                });
+            }
+         });
+        
+
+    }
     render() {
         const {renderCoponentFlag} = this.state;
         if(renderCoponentFlag){
@@ -565,7 +877,7 @@ export default class MainScreen extends Component {
                                                     textContentType='password'
                                                  />
                                             </Item>
-                                            <TouchableOpacity style={{marginVertical:5}} onPress={this.forgetPasswrod}>
+                                            <TouchableOpacity style={{marginVertical:5}} onPress={this.forgotPasswordStart}>
                                                 <Text style={{alignSelf:'flex-end'}}>Forgot Password?</Text>
                                             </TouchableOpacity>                  
                                             <Button rounded success block 
@@ -618,7 +930,7 @@ export default class MainScreen extends Component {
                                                     onChangeText={(text) => {
                                                         this.REGcheckEmail(text);
                                                         this.setState({reg_email:text})
-                                                        this.checkAvilEmail();
+                                                        this.checkAvilEmail(text);
                                                     }}
                                                     textContentType='emailAddress'
                                                     returnKeyType='next'
@@ -707,6 +1019,144 @@ export default class MainScreen extends Component {
                                 </View>
                             </Modal>
                             {/* signUpModel modal end */}
+
+
+
+
+                            
+                            {/* forgot passwod Model */}
+                            <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={this.state.forgotModelVisible}
+                                onRequestClose={() => {
+                                    this.setState({
+                                        forgotModelVisible:false
+                                    })
+                                }}>
+                                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                                    <View style={{ width: width*(0.95), height: 500,backgroundColor:"#ffffff",borderRadius:15,borderColor:'#fff'}}>
+                                        <TouchableOpacity onPress={()=>{this.setState({forgotModelVisible:false})}}>
+                                            <Icon name="close-circle-outline" style={{alignSelf:'flex-end',fontSize:30}}/>
+                                        </TouchableOpacity>
+                                        <Text style={{fontSize:30,alignSelf:'center'}}>Fogot Password</Text>
+                                        <View style={{ width: width*(0.85), alignSelf:'center',marginVertical:5}}>
+                                        
+                                            <Item  regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
+                                                <Input 
+                                                    placeholder='Email' 
+                                                    onChangeText={(text) => {
+                                                        this.forgotcheckEmail(text);
+                                                        this.setState({forgot_email:text})
+                                                        this.forgotcheckAvilEmail(text);
+                                                    }}
+                                                    textContentType='emailAddress'
+                                                    returnKeyType='next'
+                                                    keyboardType='email-address'
+                                                    editable = {this.state.forgot_email_edit}
+
+                                                />
+                                                <Icon name={this.state.forgot_email_valid_icon} style={{color:this.state.forgot_email_valid_color,fontSize:25}}/>
+                                            </Item>
+                                            { this.state.forgot_email_valid_color == 'red' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Not a Valid Email Format.</Text>
+                                            }
+                                            { this.state.forgot_avilEmail && this.state.forgot_email != '' && 
+                                                <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Unable to Find Your Account.</Text>
+                                            }
+                                            { this.state.forgot_email_edit && 
+                                                <Button rounded success block style={{marginVertical:4}} 
+                                                        onPress={this.sendOTPForgot}
+                                                        disabled={this.state.forgot_sendOTPButtonDisable }
+                                                >
+                                                        <Text>Send OTP</Text>
+                                                </Button>
+                                            }  
+                                            { this.state.askOTP && 
+                                                <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
+                                                    <Input 
+                                                        placeholder='Enter 6 Digit OTP'
+                                                        onChangeText={(text) => {
+                                                            this.setState({OTPEntered:text})
+                                                            if(text.length == 6 && text != this.state.OTPreal){
+                                                                ToastAndroid.showWithGravityAndOffset(
+                                                                    'Invalid OTP',
+                                                                    ToastAndroid.SHORT,
+                                                                    ToastAndroid.TOP,
+                                                                    25,
+                                                                    50,
+                                                                    );    
+                                                            }
+                                                        }}
+                                                        textContentType='password' 
+                                                        returnKeyType='next'
+                                                        secureTextEntry={true}
+                                                        editable = {this.state.forgot_OTP_edit}
+                                                    />
+                                                </Item>
+                                            }
+                                            {/* continue password buton after correct OTP */}
+                                            { this.state.OTPEntered == this.state.OTPreal && 
+                                                <Button rounded success block style={{marginVertical:4}} onPress={()=>{this.setState({forgot_OTP_edit:false,OTPEntered:'0'})}}>
+                                                        <Text>Continue</Text>
+                                                </Button>
+                                            }  
+                                            {/* change password box apper */}
+                                            { this.state.forgot_OTP_edit == false && 
+                                                <View>
+                                                    <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
+                                                        <Input 
+                                                            placeholder='Password'
+                                                            onChangeText={(text) => {
+                                                                this.forgotcheckPassword(text);
+                                                                this.setState({forgot_password:text})
+                                                            }}
+                                                            textContentType='password' 
+                                                            returnKeyType='next'
+                                                            secureTextEntry={true}
+                                                        />
+                                                        <Icon name={this.state.forgot_password_valid_icon} style={{color:this.state.forgot_password_valid_color,fontSize:25}}/>
+                                                    </Item>  
+                                                    { this.state.forgot_password_valid_color == 'red' && 
+                                                        <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Password Must be at least 4 character Long.</Text>
+                                                    }  
+                                                    <Item regular style={{marginVertical:2,borderRadius:15,paddingHorizontal: 7,}}>
+                                                        <Input 
+                                                            placeholder='Confirm password'
+                                                            onChangeText={(text) => {
+                                                                this.forgotcheckConfirm(text);
+                                                                this.setState({forgot_confirm:text})
+                                                            }}
+                                                            textContentType='password' 
+                                                            returnKeyType='go'
+                                                            onSubmitEditing={this.submitChangePassword}
+                                                            secureTextEntry={true}
+                                                        />
+                                                        <Icon name={this.state.forgot_confirm_valid_icon} style={{color:this.state.forgot_confirm_valid_color,fontSize:25}}/>
+                                                    </Item>
+                                                    { this.state.forgot_confirm_valid_color == 'red' && 
+                                                         <Text style={{color:'red',marginHorizontal:7,fontSize:12}}>*Confirm password Don't Matched.</Text>
+                                                    }     
+                                                    {
+                                                        this.state.forgot_confirm == this.state.forgot_password && this.state.forgot_confirm_valid_color == 'green'  &&
+                                                        <Button rounded success block style={{marginVertical:4}} 
+                                                            onPress={this.submitChangePassword}
+                                                            disabled={this.state.forgot_submitButtonDisable}>
+                                                                <Text>Change Password</Text>
+                                                        </Button>
+                                                    }            
+                                                    
+                                                        
+                                                </View>
+                                                    
+                                            }  
+                                                            
+                                            
+                                        </View>
+                                    </View>
+                                </View>
+                            </Modal>
+                            {/* forgot password end */}
                         </ImageBackground>
                 </Container>
             );
